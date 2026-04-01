@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — Earth of Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@400;600;700;800&family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#050710;--surface:#0c1020;--card:#111827;--card2:#0d1524;
+  --a1:#00f0ff;--a2:#ff3a6e;--a3:#ffe000;--a4:#a78bfa;--a5:#34d399;
+  --text:#e8eaf6;--muted:#6b7280;
+  --r:16px;--rs:12px;--rx:8px;
+  --g1:0 0 22px #00f0ff44;--g2:0 0 22px #ff3a6e44;--g3:0 0 22px #a78bfa44;
+  --bd:rgba(255,255,255,.07);--sb:260px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sb);min-height:100vh;background:var(--surface);border-right:1px solid var(--bd);
+  border-radius:0 var(--r) var(--r) 0;display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;z-index:60;transition:transform .3s;overflow-y:auto}
+.sb-logo{padding:1rem;border-bottom:1px solid var(--bd);flex-shrink:0}
+.sb-logo a{display:flex;align-items:center;gap:.6rem}
+.sb-logo-img{width:38px;height:38px;border-radius:var(--rx);background:rgba(255,255,255,.04);border:1px solid rgba(0,240,255,.2);padding:3px;flex-shrink:0}
+.sb-logo-img img{width:100%;height:100%;object-fit:contain;border-radius:4px}
+.sb-brand{font-family:'Orbitron',sans-serif;font-weight:900;font-size:.88rem;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-sub{font-family:'Space Mono',monospace;font-size:.44rem;letter-spacing:.2em;color:var(--a2);text-transform:uppercase}
+
+/* dual admin pills */
+.sb-admins{padding:.65rem .75rem;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:.45rem;flex-shrink:0}
+.sb-admins-lbl{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.pill{display:flex;align-items:center;gap:.5rem;padding:.5rem .6rem;border-radius:var(--rx);cursor:pointer;transition:all .2s;border:1px solid transparent}
+.pill:hover{background:rgba(255,255,255,.04);border-color:var(--bd)}
+.pill.pill-a{}.pill.pill-b{}
+.pill-av{position:relative;flex-shrink:0;width:32px;height:32px}
+.pill-img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;position:absolute;top:0;left:0}
+.pill-img.vis{display:block}
+.pill-ini{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:#000;font-family:'Exo 2',sans-serif}
+.pill-a .pill-ini{background:linear-gradient(135deg,var(--a1),#00bcd4);border:2px solid rgba(0,240,255,.3)}
+.pill-b .pill-ini{background:linear-gradient(135deg,var(--a4),#7c3aed);border:2px solid rgba(167,139,250,.3)}
+.pill-dot{position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.48rem;border:1.5px solid var(--surface)}
+.pill-a .pill-dot{background:var(--a1)}.pill-b .pill-dot{background:var(--a4)}
+.pill-name{font-family:'Exo 2',sans-serif;font-weight:800;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-a .pill-name{color:var(--a1)}.pill-b .pill-name{color:var(--a4)}
+.pill-role{font-family:'Space Mono',monospace;font-size:.46rem;color:var(--muted)}
+.pill-badge{font-family:'Space Mono',monospace;font-size:.43rem;padding:.1rem .32rem;border-radius:4px;margin-left:auto;flex-shrink:0}
+.pill-a .pill-badge{background:rgba(0,240,255,.1);color:var(--a1);border:1px solid rgba(0,240,255,.18)}
+.pill-b .pill-badge{background:rgba(167,139,250,.1);color:var(--a4);border:1px solid rgba(167,139,250,.18)}
+
+.sb-nav{padding:.5rem 0;flex:1}
+.sb-grp{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding:.35rem 1rem .12rem;margin-top:.3rem}
+.sb-lnk{display:flex;align-items:center;gap:.5rem;padding:.56rem .95rem;color:var(--muted);font-family:'Exo 2',sans-serif;font-size:.82rem;font-weight:700;transition:all .2s;border-left:3px solid transparent;cursor:pointer;border-radius:0 var(--rx) var(--rx) 0;margin-right:.4rem}
+.sb-lnk:hover{color:var(--text);background:rgba(255,255,255,.03);border-left-color:var(--a1)}
+.sb-lnk.act{color:var(--a1);background:rgba(0,240,255,.07);border-left-color:var(--a1)}
+.sb-lnk .ico{font-size:.86rem;width:15px;text-align:center;flex-shrink:0}
+.sb-foot{padding:.65rem .75rem 0;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:.32rem;flex-shrink:0}
+.sb-btn{display:flex;align-items:center;gap:.45rem;padding:.48rem .68rem;border-radius:var(--rx);font-family:'Exo 2',sans-serif;font-size:.76rem;font-weight:700;transition:all .2s;cursor:pointer;border:none;width:100%}
+.sb-web{background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.14);color:var(--a1)}
+.sb-web:hover{background:rgba(0,240,255,.13);box-shadow:var(--g1)}
+.sb-out{background:rgba(255,58,110,.06);border:1px solid rgba(255,58,110,.14);color:var(--a2)}
+.sb-out:hover{background:rgba(255,58,110,.13);box-shadow:var(--g2)}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:55;backdrop-filter:blur(4px)}
+.sb-tog{display:none;position:fixed;top:1rem;left:1rem;z-index:70;width:40px;height:40px;border-radius:var(--rx);background:var(--surface);border:1px solid var(--bd);align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:5px;padding:8px}
+.sb-tog span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.sb-tog.op span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.sb-tog.op span:nth-child(2){opacity:0}
+.sb-tog.op span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sb);flex:1;display:flex;flex-direction:column;min-height:100vh;position:relative;z-index:1}
+.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--bd);border-radius:0 0 var(--r) var(--r);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:40}
+.tb-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em}
+.tb-right{display:flex;align-items:center;gap:.7rem}
+.tb-live{padding:.25rem .72rem;border-radius:20px;font-size:.6rem;font-family:'Space Mono',monospace;background:rgba(0,240,255,.08);color:var(--a1);border:1px solid rgba(0,240,255,.18)}
+.tb-search{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:var(--rx);padding:.36rem .72rem}
+.tb-search input{background:none;border:none;outline:none;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.86rem;width:120px}
+.tb-search input::placeholder{color:var(--muted)}
+.tb-av{cursor:pointer;position:relative;width:32px;height:32px;flex-shrink:0}
+.tb-av-img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;position:absolute;inset:0;border:2px solid rgba(0,240,255,.3)}
+.tb-av-img.vis{display:block}
+.tb-av-ini{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:800;color:#000}
+.content{padding:1.4rem 1.5rem;flex:1}
+.pg{display:none;animation:pf .3s ease}.pg.act{display:block}
+@keyframes pf{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pg-title{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.08em;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.pg-title small{font-family:'Space Mono',monospace;font-size:.54rem;color:var(--muted);font-weight:400}
+
+/* ══ CARDS ══ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.3rem}
+.sc{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.3rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.sc:hover{transform:translateY(-3px)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.s1::before{background:linear-gradient(90deg,var(--a1),#00bcd4)}.s2::before{background:linear-gradient(90deg,var(--a2),#ff6d00)}
+.s3::before{background:linear-gradient(90deg,var(--a3),#ff9800)}.s4::before{background:linear-gradient(90deg,var(--a4),#60a5fa)}
+.s5::before{background:linear-gradient(90deg,var(--a5),#059669)}
+.s1:hover{box-shadow:var(--g1)}.s2:hover{box-shadow:var(--g2)}.s4:hover{box-shadow:var(--g3)}
+.sc-lbl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:.38rem}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;line-height:1}
+.s1 .sc-val{color:var(--a1)}.s2 .sc-val{color:var(--a2)}.s3 .sc-val{color:var(--a3)}.s4 .sc-val{color:var(--a4)}.s5 .sc-val{color:var(--a5)}
+.sc-sub{font-size:.72rem;color:var(--muted);margin-top:.18rem}
+.sc-ico{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);font-size:1.8rem;opacity:.09}
+
+/* chart / box */
+.box{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:1.1rem}
+.box-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.box-ttl{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em}
+.box-badge{font-family:'Space Mono',monospace;font-size:.54rem;padding:.18rem .56rem;border-radius:20px;background:rgba(0,240,255,.08);color:var(--a1);border:1px solid rgba(0,240,255,.18)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.three-col{display:grid;grid-template-columns:2fr 1fr;gap:.9rem}
+.cc-wrap{position:relative;width:100%}
+.cc-wrap canvas{display:block;width:100%!important}
+.chart-tabs{display:flex;gap:.35rem}
+.ctab{padding:.25rem .7rem;border-radius:5px;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--muted);transition:all .2s}
+.ctab.act{background:rgba(0,240,255,.1);color:var(--a1);border-color:rgba(0,240,255,.22)}
+.donut-row{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
+.donut-wrap{position:relative;width:130px;height:130px;flex-shrink:0}
+.donut-svg{transform:rotate(-90deg)}
+.donut-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut-ctr .big{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--a1)}
+.donut-ctr .sml{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted)}
+.dleg{display:flex;flex-direction:column;gap:.4rem;flex:1}
+.dleg-item{display:flex;align-items:center;gap:.45rem;font-size:.8rem}
+.dleg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.top-list{display:flex;flex-direction:column;gap:.38rem}
+.top-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .65rem;border-radius:var(--rx);background:rgba(255,255,255,.02);border:1px solid var(--bd)}
+.top-rank{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;width:17px;text-align:center;color:var(--muted);flex-shrink:0}
+.rank-1{color:var(--a3)}.rank-2{color:#9ca3af}.rank-3{color:#b45309}
+.top-emo{width:34px;height:22px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.top-emo img{width:100%;height:100%;object-fit:cover;border-radius:4px}
+.top-info{flex:1;min-width:0}
+.top-nm{font-weight:700;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-mt{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted)}
+.top-dl{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--a1);flex-shrink:0}
+.act-list{display:flex;flex-direction:column;gap:.38rem}
+.act-item{display:flex;align-items:center;gap:.65rem;padding:.56rem .75rem;background:rgba(255,255,255,.02);border-radius:var(--rx);border:1px solid var(--bd)}
+.act-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.act-av{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:800;color:#000;overflow:hidden}
+.act-av img{width:100%;height:100%;object-fit:cover}
+.act-txt{font-size:.8rem;flex:1}
+.act-time{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted)}
+.rg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem}
+.rg-card{background:var(--card2);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;transition:transform .3s,box-shadow .3s}
+.rg-card:hover{transform:translateY(-4px);box-shadow:var(--g1)}
+.rg-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.rg-ph{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:1.7rem}
+.rg-body{padding:.5rem .65rem}
+.rg-ttl{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rg-meta{display:flex;align-items:center;justify-content:space-between;margin-top:.1rem}
+.rg-cat{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted)}
+.rg-rat{font-size:.68rem;color:var(--a3)}
+
+/* ══ TABLE ══ */
+.tbl-wrap{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:1.3rem}
+.tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.2rem;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:.55rem}
+.tbl-search{display:flex;align-items:center;gap:.38rem;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:var(--rx);padding:.32rem .65rem}
+.tbl-search input{background:none;border:none;outline:none;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.85rem;width:130px}
+.tbl-search input::placeholder{color:var(--muted)}
+.tbl-sc{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+thead th{padding:.62rem .9rem;text-align:left;font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bd);background:rgba(255,255,255,.02)}
+tbody tr{border-bottom:1px solid var(--bd);transition:background .2s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+td{padding:.68rem .9rem;font-size:.83rem;vertical-align:middle}
+.td-game{display:flex;align-items:center;gap:.65rem}
+.td-th{width:48px;height:28px;border-radius:5px;object-fit:cover;flex-shrink:0;border:1px solid var(--bd)}
+.td-ph{width:48px;height:28px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid var(--bd)}
+.td-ttl{font-weight:700;font-size:.84rem}
+.td-cat{font-family:'Space Mono',monospace;font-size:.53rem;color:var(--muted);margin-top:.05rem}
+.td-bdg{display:inline-block;padding:.1rem .44rem;border-radius:4px;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase}
+.b-hot{background:rgba(255,58,110,.12);color:var(--a2);border:1px solid rgba(255,58,110,.22)}
+.b-new{background:rgba(255,224,0,.12);color:var(--a3);border:1px solid rgba(255,224,0,.22)}
+.b-free{background:rgba(0,240,255,.12);color:var(--a1);border:1px solid rgba(0,240,255,.22)}
+.b-none{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--bd)}
+.mini-bar{height:4px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:.22rem;overflow:hidden}
+.mini-fill{height:100%;border-radius:3px}
+.td-acts{display:flex;gap:.28rem}
+.ab{padding:.22rem .52rem;border-radius:5px;font-family:'Exo 2',sans-serif;font-weight:700;font-size:.64rem;border:none;cursor:pointer;transition:all .2s}
+.a-ed{background:rgba(0,240,255,.08);color:var(--a1);border:1px solid rgba(0,240,255,.18)}.a-ed:hover{background:var(--a1);color:#000}
+.a-dl{background:rgba(255,58,110,.08);color:var(--a2);border:1px solid rgba(255,58,110,.18)}.a-dl:hover{background:var(--a2);color:#fff}
+
+/* ══ ADD GAMES ══ */
+.q-banner{display:none;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.18);border-radius:var(--rx);padding:.75rem 1rem;margin-bottom:.9rem;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem}
+.q-banner.show{display:flex}
+.q-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.9rem}
+.q-item{display:flex;align-items:center;gap:.65rem;background:var(--card2);border:1px solid var(--bd);border-radius:var(--rx);padding:.56rem .8rem;animation:pf .3s ease}
+.q-th{width:44px;height:28px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--bd)}
+.q-emo{width:44px;height:28px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid var(--bd)}
+.q-ttl{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.04em}
+.q-mt{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted)}
+.add-wrap{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.add-hdr{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.3rem;border-bottom:1px solid var(--bd);background:rgba(0,240,255,.03)}
+.add-grid{display:grid;grid-template-columns:1fr 1fr}
+.add-col{padding:1.2rem}
+.add-col:first-child{border-right:1px solid var(--bd)}
+.add-col-lbl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--a1);margin-bottom:.8rem}
+.fg{display:flex;flex-direction:column;gap:.32rem;margin-bottom:.7rem}
+.fg label{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.fg input,.fg select,.fg textarea{width:100%;padding:.62rem .82rem;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:var(--rx);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.93rem;outline:none;transition:border-color .25s,box-shadow .25s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--a1);box-shadow:0 0 0 3px rgba(0,240,255,.07)}
+.fg select option{background:var(--card)}
+.fg textarea{resize:vertical;min-height:68px}
+.fg input[type=color]{height:36px;cursor:pointer;padding:.22rem}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem}
+
+/* ══ UPLOAD DROP ZONE ══ */
+.dz{border:2px dashed rgba(0,240,255,.2);border-radius:var(--rs);cursor:pointer;transition:all .28s;background:rgba(0,240,255,.02);overflow:hidden;position:relative}
+.dz:hover,.dz.drag{border-color:var(--a1);background:rgba(0,240,255,.06)}
+.dz-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.38rem;padding:1.1rem .8rem;text-align:center}
+.dz-ico{font-size:1.7rem}
+.dz-ph p{color:var(--muted);font-size:.8rem}
+.dz-ph span{color:var(--a1);font-weight:700}
+.dz-ph .hint{font-size:.64rem;color:var(--muted);margin-top:.1rem}
+.dz-prev{display:none;position:relative}
+.dz-prev img{width:100%;max-height:150px;object-fit:cover;display:block}
+.dz-prev.show{display:block}
+.dz-remove{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(255,58,110,.88);border:none;color:#fff;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.add-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.1rem}
+.btn-q{padding:.7rem;border-radius:var(--rx);background:rgba(0,240,255,.08);border:1px solid rgba(0,240,255,.25);color:var(--a1);font-family:'Exo 2',sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .22s}
+.btn-q:hover{background:rgba(0,240,255,.17)}
+.btn-pub{padding:.7rem;border-radius:var(--rx);background:linear-gradient(90deg,var(--a1),#00bcd4);border:none;color:#000;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:box-shadow .22s}
+.btn-pub:hover{box-shadow:var(--g1)}
+.pv-card{border:1px solid rgba(0,240,255,.14);border-radius:var(--rx);overflow:hidden;background:rgba(0,240,255,.02);transition:all .3s;margin-bottom:.7rem}
+.pv-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:none}
+.pv-img.show{display:block}
+.pv-emo{width:100%;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem}
+.pv-body{padding:.5rem .72rem}
+.pv-ttl{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.04em}
+.pv-cat{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted)}
+
+/* ══ MODAL ══ */
+.mo{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s}
+.mo.open{opacity:1;pointer-events:all}
+.mo-box{background:var(--card);border:1px solid rgba(0,240,255,.14);border-radius:var(--r);width:100%;max-width:680px;max-height:92vh;overflow-y:auto;transform:scale(.94) translateY(18px);transition:transform .3s}
+.mo.open .mo-box{transform:scale(1) translateY(0)}
+.mo-hdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.3rem;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--card);z-index:2}
+.mo-ttl{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em}
+.mo-cls{width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:.88rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.mo-cls:hover{background:var(--a2);color:#fff}
+.mo-body{padding:1.2rem}
+.mo-foot{display:flex;justify-content:flex-end;gap:.55rem;padding:.9rem 1.3rem;border-top:1px solid var(--bd)}
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.fg-full{grid-column:1/-1}
+.btn-cancel{padding:.56rem 1rem;border-radius:var(--rx);background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--muted);font-family:'Exo 2',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .22s}
+.btn-cancel:hover{border-color:var(--a2);color:var(--a2)}
+.btn-save{padding:.56rem 1.3rem;border-radius:var(--rx);background:linear-gradient(90deg,var(--a1),#00bcd4);border:none;color:#000;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:box-shadow .22s,transform .2s}
+.btn-save:hover{box-shadow:var(--g1);transform:translateY(-1px)}
+.del-box{max-width:380px}.del-body{text-align:center;padding:1.7rem 1.3rem}
+.del-ico{font-size:2.5rem;margin-bottom:.65rem}
+.del-nm{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--a2);margin-bottom:.4rem}
+.del-msg{color:var(--muted);font-size:.86rem;line-height:1.55}
+
+/* ── PROFILE MODAL ── */
+.prof-box{max-width:600px}
+.prof-tabs{display:flex;border-bottom:1px solid var(--bd)}
+.ptab{flex:1;padding:.8rem;text-align:center;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;transition:all .22s;border-bottom:3px solid transparent}
+.ptab.a{color:var(--a1)}.ptab.b{color:var(--a4)}
+.ptab.act.a{border-bottom-color:var(--a1);background:rgba(0,240,255,.05)}
+.ptab.act.b{border-bottom-color:var(--a4);background:rgba(167,139,250,.05)}
+.ppanel{display:none;padding:1.4rem}
+.ppanel.act{display:block}
+.pav-wrap{position:relative;width:86px;height:86px;margin:0 auto 1rem;cursor:pointer}
+.pav-img{width:86px;height:86px;border-radius:50%;object-fit:cover;display:none;position:absolute;inset:0}
+.pav-img.vis{display:block}
+.pav-ini{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;color:#000;font-family:'Exo 2',sans-serif}
+.pav-ini.a{background:linear-gradient(135deg,var(--a1),#00bcd4);border:3px solid rgba(0,240,255,.35)}
+.pav-ini.b{background:linear-gradient(135deg,var(--a4),#7c3aed);border:3px solid rgba(167,139,250,.35);color:#fff}
+.pav-cam{position:absolute;bottom:2px;right:2px;width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem}
+.pav-cam.a{background:var(--a1)}.pav-cam.b{background:var(--a4)}
+.pav-hint{font-family:'Space Mono',monospace;font-size:.54rem;color:var(--muted);text-align:center;margin-bottom:.9rem}
+.pfields{display:flex;flex-direction:column;gap:.7rem}
+.pfields label{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.32rem}
+.pfields input{width:100%;padding:.62rem .82rem;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:var(--rx);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.98rem;outline:none;transition:border-color .22s}
+.pfields input:focus{border-color:var(--a1)}
+.psave{width:100%;padding:.7rem;border-radius:var(--rx);border:none;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.86rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:.9rem;transition:box-shadow .22s}
+.psave.a{background:linear-gradient(90deg,var(--a1),#00bcd4);color:#000}
+.psave.a:hover{box-shadow:var(--g1)}
+.psave.b{background:linear-gradient(90deg,var(--a4),#7c3aed);color:#fff}
+.psave.b:hover{box-shadow:var(--g3)}
+
+/* ── LOGOUT MODAL ── */
+.logout-box{max-width:380px}
+.logout-body{text-align:center;padding:1.8rem 1.4rem}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;padding:.76rem 1.2rem;border-radius:var(--rx);background:var(--card);border:1px solid rgba(0,240,255,.26);color:var(--a1);font-family:'Exo 2',sans-serif;font-size:.86rem;font-weight:700;box-shadow:var(--g1);transform:translateY(80px);opacity:0;transition:all .38s cubic-bezier(.25,.8,.25,1);max-width:290px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.err{border-color:rgba(255,58,110,.26);color:var(--a2);box-shadow:var(--g2)}
+.toast.ok{border-color:rgba(52,211,153,.26);color:var(--a5);box-shadow:0 0 20px rgba(52,211,153,.22)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px){.stats-row{grid-template-columns:1fr 1fr}.three-col{grid-template-columns:1fr}.add-grid{grid-template-columns:1fr}.add-col:first-child{border-right:none;border-bottom:1px solid var(--bd)}}
+@media(max-width:860px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0);box-shadow:4px 0 30px rgba(0,0,0,.5)}.sb-ov{display:block}.sb-tog{display:flex}.main{margin-left:0}.topbar{padding:0 .9rem 0 3.5rem}.content{padding:1rem .9rem}.stats-row{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}.tb-search{display:none}}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr}.f2,.f3,.fg-grid{grid-template-columns:1fr}.fg-full{grid-column:1}.add-btns{grid-template-columns:1fr}}
+/* ── admin-added card highlight ── */
+#adminAddedGrid .rg-card{border-color:rgba(0,240,255,.18)}
+#adminAddedGrid .rg-card:hover{box-shadow:0 8px 32px rgba(0,240,255,.22),var(--g1)}
+</style>
+</head>
+<body>
+
+<div class="sb-ov" id="sbOv" onclick="closeSB()"></div>
+<button class="sb-tog" id="sbTog" onclick="toggleSB()"><span></span><span></span><span></span></button>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <a href="earth-of-games.html">
+      <div class="sb-logo-img"><img src="eog1.png" alt=""/></div>
+      <div><div class="sb-brand">Earth of Games</div><div class="sb-sub">Admin Panel</div></div>
+    </a>
+  </div>
+
+  <!-- Dual admin pills -->
+  <div class="sb-admins">
+    <div class="sb-admins-lbl">Administrators</div>
+    <div class="pill pill-a" onclick="openProf('a')">
+      <div class="pill-av"><img class="pill-img" id="pillImgA" src="" alt=""/><div class="pill-ini" id="pillIniA">A</div><div class="pill-dot">✏</div></div>
+      <div style="flex:1;min-width:0"><div class="pill-name" id="pillNmA">Admin One</div><div class="pill-role" id="pillRlA">Super Administrator</div></div>
+      <span class="pill-badge">ADMIN</span>
+    </div>
+    <div class="pill pill-b" onclick="openProf('b')">
+      <div class="pill-av"><img class="pill-img" id="pillImgB" src="" alt=""/><div class="pill-ini" id="pillIniB">B</div><div class="pill-dot">✏</div></div>
+      <div style="flex:1;min-width:0"><div class="pill-name" id="pillNmB">Admin Two</div><div class="pill-role" id="pillRlB">Game Manager</div></div>
+      <span class="pill-badge">MOD</span>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-grp">Overview</div>
+    <div class="sb-lnk act" data-pg="dashboard"><span class="ico">📊</span> Dashboard</div>
+    <div class="sb-lnk" data-pg="analytics"><span class="ico">📈</span> Analytics</div>
+    <div class="sb-grp">Library</div>
+    <div class="sb-lnk" data-pg="games"><span class="ico">🎮</span> Manage Games</div>
+    <div class="sb-lnk" data-pg="upload"><span class="ico">➕</span> Add Games</div>
+    <div class="sb-grp">Reports</div>
+    <div class="sb-lnk" data-pg="downloads"><span class="ico">⬇️</span> Downloads</div>
+    <div class="sb-lnk" data-pg="likes"><span class="ico">❤️</span> Likes & Ratings</div>
+    <div class="sb-grp">Settings</div>
+    <div class="sb-lnk" data-pg="admins"><span class="ico">👥</span> Administrators</div>
+  </nav>
+  <div class="sb-foot">
+    <a href="earth-of-games.html" class="sb-btn sb-web">🌐 <span>View Website</span></a>
+    <button class="sb-btn sb-out" onclick="logout()">🚪 <span>Logout</span></button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tbTitle">Dashboard</div>
+    <div class="tb-right">
+      <div class="tb-live">🟢 Live</div>
+      <div class="tb-search"><span>🔍</span><input type="text" placeholder="Search games…" oninput="gSearch(this.value)"/></div>
+      <div class="tb-av" onclick="openProf('a')">
+        <img class="tb-av-img" id="tbAvImg" src="" alt=""/>
+        <div class="tb-av-ini" id="tbAvIni">A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dashboard" class="pg act">
+      <div class="pg-title">Dashboard <small>/ Overview</small></div>
+      <div class="stats-row">
+        <div class="sc s1"><div class="sc-lbl">Total Downloads</div><div class="sc-val" id="stDL">0</div><div class="sc-sub">↑ 12% this month</div><div class="sc-ico">⬇️</div></div>
+        <div class="sc s2"><div class="sc-lbl">Total Likes</div><div class="sc-val" id="stLK">0</div><div class="sc-sub">↑ 8% this month</div><div class="sc-ico">❤️</div></div>
+        <div class="sc s3"><div class="sc-lbl">Games Listed</div><div class="sc-val" id="stGM">0</div><div class="sc-sub">In library</div><div class="sc-ico">🎮</div></div>
+        <div class="sc s4"><div class="sc-lbl">Active Players</div><div class="sc-val">5,200</div><div class="sc-sub">↑ 3% this week</div><div class="sc-ico">👥</div></div>
+      </div>
+      <div class="box" style="margin-bottom:.9rem"><div class="box-hdr"><div class="box-ttl">Downloads — Last 7 Days</div><div class="box-badge">Weekly</div></div><div class="cc-wrap" style="height:150px"><canvas id="weekChart" height="150"></canvas></div></div>
+      <div class="box" style="margin-bottom:.9rem">
+        <div class="box-hdr">
+          <div class="box-ttl">🆕 Admin Added Games</div>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <div class="box-badge" id="adminAddedBadge">0 games</div>
+            <button onclick="goPage('upload')" style="padding:.22rem .7rem;border-radius:5px;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.22);color:var(--a1);font-family:'Exo 2',sans-serif;font-weight:700;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .22s" onmouseover="this.style.background='rgba(0,240,255,.2)'" onmouseout="this.style.background='rgba(0,240,255,.1)'">+ Add Game</button>
+          </div>
+        </div>
+        <!-- Admin added games grid — shown ONLY when admin has added games -->
+        <div id="adminAddedGrid" class="rg-grid"></div>
+        <div id="adminAddedEmpty" style="display:none;padding:1.4rem;text-align:center">
+          <div style="font-size:2rem;margin-bottom:.5rem">🎮</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted)">No games added yet.</div>
+          <button onclick="goPage('upload')" style="margin-top:.7rem;padding:.45rem 1.1rem;border-radius:var(--rx);background:linear-gradient(90deg,var(--a1),#00bcd4);border:none;color:#000;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">➕ Add Your First Game</button>
+        </div>
+      </div>
+
+      <div class="box" style="margin-bottom:.9rem">
+        <div class="box-hdr"><div class="box-ttl">All Recent Games</div><div class="box-badge" id="rgBadge">—</div></div>
+        <div class="rg-grid" id="rgGrid"></div>
+      </div>
+      <div class="two-col">
+        <div class="box"><div class="box-hdr"><div class="box-ttl">Top Downloads</div></div><div class="top-list" id="topList"></div></div>
+        <div class="box"><div class="box-hdr"><div class="box-ttl">Recent Activity</div></div><div class="act-list" id="actList"></div></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div id="pg-analytics" class="pg">
+      <div class="pg-title">Analytics <small>/ Trends & Graphs</small></div>
+      <div class="stats-row">
+        <div class="sc s1"><div class="sc-lbl">Month Downloads</div><div class="sc-val">28.4K</div><div class="sc-sub">↑ 15% vs last month</div></div>
+        <div class="sc s2"><div class="sc-lbl">Avg Rating</div><div class="sc-val" id="avgRat">—</div><div class="sc-sub">All games</div></div>
+        <div class="sc s5"><div class="sc-lbl">Conversion</div><div class="sc-val">6.2%</div><div class="sc-sub">Visitors → Downloads</div></div>
+        <div class="sc s3"><div class="sc-lbl">Bounce Rate</div><div class="sc-val">34%</div><div class="sc-sub">↓ 4% improvement</div></div>
+      </div>
+      <div class="box" style="margin-bottom:.9rem">
+        <div class="box-hdr"><div class="box-ttl">Monthly Trends</div><div class="chart-tabs"><button class="ctab act" onclick="setMV('downloads',this)">Downloads</button><button class="ctab" onclick="setMV('likes',this)">Likes</button><button class="ctab" onclick="setMV('revenue',this)">Revenue</button></div></div>
+        <div class="cc-wrap" style="height:200px"><canvas id="monthChart" height="200"></canvas></div>
+      </div>
+      <div class="two-col" style="margin-bottom:.9rem">
+        <div class="box"><div class="box-hdr"><div class="box-ttl">Downloads by Category</div></div><div class="cc-wrap" style="height:165px"><canvas id="catChart" height="165"></canvas></div></div>
+        <div class="box"><div class="box-hdr"><div class="box-ttl">Likes Distribution</div></div>
+          <div class="donut-row">
+            <div class="donut-wrap"><svg class="donut-svg" viewBox="0 0 120 120" width="130" height="130"><circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="16"/><circle id="dn1" cx="60" cy="60" r="46" fill="none" stroke="#ff3a6e" stroke-width="16" stroke-dasharray="289" stroke-dashoffset="289"/><circle id="dn2" cx="60" cy="60" r="46" fill="none" stroke="#00f0ff" stroke-width="16" stroke-dasharray="289" stroke-dashoffset="289"/><circle id="dn3" cx="60" cy="60" r="46" fill="none" stroke="#ce93d8" stroke-width="16" stroke-dasharray="289" stroke-dashoffset="289"/><circle id="dn4" cx="60" cy="60" r="46" fill="none" stroke="#ffe000" stroke-width="16" stroke-dasharray="289" stroke-dashoffset="289"/></svg><div class="donut-ctr"><div class="big" id="dnBig">0</div><div class="sml">LIKES</div></div></div>
+            <div class="dleg">
+              <div class="dleg-item"><div class="dleg-dot" style="background:#ff3a6e"></div>Action<span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.64rem;color:#ff3a6e" id="dnA">38%</span></div>
+              <div class="dleg-item"><div class="dleg-dot" style="background:#00f0ff"></div>Sports<span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.64rem;color:#00f0ff" id="dnS">28%</span></div>
+              <div class="dleg-item"><div class="dleg-dot" style="background:#ce93d8"></div>RPG<span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.64rem;color:#ce93d8" id="dnR">22%</span></div>
+              <div class="dleg-item"><div class="dleg-dot" style="background:#ffe000"></div>Racing<span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.64rem;color:#ffe000" id="dnRc">12%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box"><div class="box-hdr"><div class="box-ttl">Category Performance Radar</div></div><div class="cc-wrap" style="height:240px"><canvas id="radarChart" height="240"></canvas></div></div>
+    </div>
+
+    <!-- MANAGE GAMES -->
+    <div id="pg-games" class="pg">
+      <div class="pg-title">Manage Games <small>/ Library</small></div>
+      <div class="tbl-wrap">
+        <div class="tbl-hdr">
+          <div class="box-ttl" id="gmCount">All Games</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <div class="tbl-search"><span>🔍</span><input type="text" placeholder="Search…" oninput="filterTbl(this.value)"/></div>
+            <button class="ab a-ed" style="font-size:.7rem;padding:.28rem .75rem" onclick="openAddModal()">+ Add Game</button>
+          </div>
+        </div>
+        <div class="tbl-sc"><table><thead><tr><th>Game</th><th>Category</th><th>Downloads</th><th>Likes</th><th>Rating</th><th>Badge</th><th>Actions</th></tr></thead><tbody id="gmTbl"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ADD GAMES -->
+    <div id="pg-upload" class="pg">
+      <div class="pg-title">Add Games <small>/ Batch Queue</small></div>
+      <div class="q-banner" id="qBanner">
+        <div style="display:flex;align-items:center;gap:.5rem;font-family:'Exo 2',sans-serif;font-weight:700;font-size:.86rem"><span>📋</span><span id="qLabel">0 games in queue</span></div>
+        <div style="display:flex;gap:.45rem">
+          <button onclick="clearQ()" style="padding:.34rem .8rem;border-radius:var(--rx);background:rgba(255,58,110,.1);border:1px solid rgba(255,58,110,.22);color:var(--a2);font-family:'Exo 2',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">🗑 Clear</button>
+          <button onclick="pubAll()" style="padding:.34rem .95rem;border-radius:var(--rx);background:linear-gradient(90deg,var(--a1),#00bcd4);border:none;color:#000;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">🚀 Publish All</button>
+        </div>
+      </div>
+      <div class="q-list" id="qList"></div>
+      <div class="add-wrap">
+        <div class="add-hdr"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em">➕ New Game Entry</div><div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Upload cover from your device</div></div>
+        <div class="add-grid">
+          <!-- LEFT -->
+          <div class="add-col">
+            <div class="add-col-lbl">📋 Game Details</div>
+            <div class="fg"><label>Title *</label><input type="text" id="qTit" placeholder="e.g. God of War Ragnarök" oninput="updQP()"/></div>
+            <div class="fg"><label>Category *</label><select id="qCat" onchange="updQP()"><option value="">Select…</option><option>Action</option><option>Sports</option><option>RPG</option><option>Racing</option></select></div>
+            <div class="fg"><label>Description</label><textarea id="qDesc" placeholder="Describe the game…"></textarea></div>
+            <div class="f2"><div class="fg"><label>Rating (0–5)</label><input type="number" id="qRat" placeholder="4.8" min="0" max="5" step="0.1" oninput="updQP()"/></div><div class="fg"><label>File Size</label><input type="text" id="qSz" placeholder="45 GB"/></div></div>
+            <div class="f2"><div class="fg"><label>Badge</label><select id="qBdg"><option value="">None</option><option value="hot">🔥 Hot</option><option value="new">✨ New</option><option value="free">🆓 Free</option></select></div><div class="fg"><label>Emoji</label><input type="text" id="qEmo" placeholder="🎮" maxlength="4" oninput="updQP()"/></div></div>
+            <div class="f3"><div class="fg"><label>Color</label><input type="color" id="qCol" value="#00f0ff" oninput="updQP()"/></div><div class="fg"><label>Downloads</label><input type="number" id="qDL" placeholder="0"/></div><div class="fg"><label>Likes</label><input type="number" id="qLK" placeholder="0"/></div></div>
+          </div>
+          <!-- RIGHT -->
+          <div class="add-col">
+            <div class="add-col-lbl">🖼️ Cover Image &amp; Link</div>
+            <div class="fg" style="margin-bottom:.7rem">
+              <label>Cover Image <span style="font-weight:400;color:var(--muted);font-size:.5rem">(from your device)</span></label>
+              <div class="dz" id="qDZ" onclick="document.getElementById('qImgIn').click()">
+                <div class="dz-prev" id="qDZprev"><img id="qDZimg" src="" alt=""/><button class="dz-remove" onclick="rmQImg(event)">✕</button></div>
+                <div class="dz-ph" id="qDZph"><div class="dz-ico">🖼️</div><p>Drag &amp; drop or <span>click to browse</span></p><p class="hint">JPG · PNG · WEBP — auto-compressed to save space</p></div>
+              </div>
+              <input type="file" id="qImgIn" accept="image/*" style="display:none" onchange="handleQImg(this)"/>
+            </div>
+            <div class="fg"><label>Download URL</label><input type="url" id="qURL" placeholder="https://store.steampowered.com/…"/></div>
+            <div class="fg">
+              <label>Live Preview</label>
+              <div class="pv-card" id="qPvCard">
+                <img class="pv-img" id="qPvImg" src="" alt=""/>
+                <div class="pv-emo" id="qPvEmo"><span id="qPvEmoSpan">🎮</span></div>
+                <div class="pv-body"><div class="pv-ttl" id="qPvTtl">Game Title</div><div class="pv-cat" id="qPvCat">Category · ⭐ —</div></div>
+              </div>
+            </div>
+            <div class="add-btns"><button class="btn-q" onclick="addToQueue()">📋 Add to Queue</button><button class="btn-pub" onclick="addAndPub()">🚀 Publish Now</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOWNLOADS -->
+    <div id="pg-downloads" class="pg">
+      <div class="pg-title">Downloads <small>/ Report</small></div>
+      <div class="stats-row">
+        <div class="sc s1"><div class="sc-lbl">Today</div><div class="sc-val">1,240</div><div class="sc-sub">↑ 18% vs yesterday</div></div>
+        <div class="sc s2"><div class="sc-lbl">This Week</div><div class="sc-val">8,750</div><div class="sc-sub">Peak: Thursday</div></div>
+        <div class="sc s3"><div class="sc-lbl">This Month</div><div class="sc-val">28.4K</div><div class="sc-sub">Target: 30K</div></div>
+        <div class="sc s4"><div class="sc-lbl">All Time</div><div class="sc-val">184K</div><div class="sc-sub">Since launch</div></div>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-hdr"><div class="box-ttl">Downloads by Game</div></div><div class="tbl-sc"><table><thead><tr><th>Game</th><th>Category</th><th>Downloads</th><th>Progress</th><th>Trend</th></tr></thead><tbody id="dlTbl"></tbody></table></div></div>
+    </div>
+
+    <!-- LIKES -->
+    <div id="pg-likes" class="pg">
+      <div class="pg-title">Likes &amp; Ratings <small>/ Engagement</small></div>
+      <div class="stats-row">
+        <div class="sc s1"><div class="sc-lbl">Total Likes</div><div class="sc-val" id="lkStat">0</div><div class="sc-sub">↑ 8% this month</div></div>
+        <div class="sc s2"><div class="sc-lbl">5-Star Ratings</div><div class="sc-val">2,140</div><div class="sc-sub">Elden Ring leads</div></div>
+        <div class="sc s3"><div class="sc-lbl">Avg Rating</div><div class="sc-val" id="lkAvg">—</div><div class="sc-sub">All games</div></div>
+        <div class="sc s4"><div class="sc-lbl">Reviews</div><div class="sc-val">12,880</div><div class="sc-sub">↑ 5% this week</div></div>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-hdr"><div class="box-ttl">Likes &amp; Ratings by Game</div></div><div class="tbl-sc"><table><thead><tr><th>Game</th><th>Category</th><th>Likes</th><th>Rating</th><th>Reviews</th><th>Trend</th></tr></thead><tbody id="lkTbl"></tbody></table></div></div>
+    </div>
+
+    <!-- ADMINISTRATORS -->
+    <div id="pg-admins" class="pg">
+      <div class="pg-title">Administrators <small>/ Team</small></div>
+      <div class="two-col">
+        <div style="background:var(--card);border:1px solid rgba(0,240,255,.14);border-radius:var(--r);overflow:hidden">
+          <div style="height:4px;background:linear-gradient(90deg,var(--a1),#00bcd4)"></div>
+          <div style="padding:1.8rem;text-align:center">
+            <div style="position:relative;width:86px;height:86px;margin:0 auto .9rem;cursor:pointer" onclick="openProf('a')">
+              <img id="adPgImgA" src="" alt="" style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:3px solid rgba(0,240,255,.33);display:none;position:absolute;inset:0"/>
+              <div id="adPgIniA" style="width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,var(--a1),#00bcd4);display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;color:#000;font-family:'Exo 2',sans-serif;border:3px solid rgba(0,240,255,.33)">A</div>
+              <div style="position:absolute;bottom:2px;right:2px;width:24px;height:24px;background:var(--a1);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:.76rem">📷</div>
+            </div>
+            <div id="adPgNmA" style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;color:var(--a1);margin-bottom:.25rem">Admin One</div>
+            <div id="adPgRlA" style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-bottom:.9rem">Super Administrator</div>
+            <div style="text-align:left;padding:.8rem;background:rgba(0,240,255,.04);border-radius:var(--rx);border:1px solid rgba(0,240,255,.1);font-size:.82rem;display:flex;flex-direction:column;gap:.35rem">
+              <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Permissions</div>
+              <div>✅ Full Access</div><div>✅ Publish Games</div><div>✅ Delete Games</div><div>✅ Manage Admins</div>
+            </div>
+            <button onclick="openProf('a')" style="margin-top:.9rem;width:100%;padding:.65rem;border-radius:var(--rx);background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.22);color:var(--a1);font-family:'Exo 2',sans-serif;font-weight:800;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .22s">✏️ Edit Profile</button>
+          </div>
+        </div>
+        <div style="background:var(--card);border:1px solid rgba(167,139,250,.14);border-radius:var(--r);overflow:hidden">
+          <div style="height:4px;background:linear-gradient(90deg,var(--a4),#7c3aed)"></div>
+          <div style="padding:1.8rem;text-align:center">
+            <div style="position:relative;width:86px;height:86px;margin:0 auto .9rem;cursor:pointer" onclick="openProf('b')">
+              <img id="adPgImgB" src="" alt="" style="width:86px;height:86px;border-radius:50%;object-fit:cover;border:3px solid rgba(167,139,250,.33);display:none;position:absolute;inset:0"/>
+              <div id="adPgIniB" style="width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,var(--a4),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;color:#fff;font-family:'Exo 2',sans-serif;border:3px solid rgba(167,139,250,.33)">B</div>
+              <div style="position:absolute;bottom:2px;right:2px;width:24px;height:24px;background:var(--a4);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:.76rem">📷</div>
+            </div>
+            <div id="adPgNmB" style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;color:var(--a4);margin-bottom:.25rem">Admin Two</div>
+            <div id="adPgRlB" style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-bottom:.9rem">Game Manager</div>
+            <div style="text-align:left;padding:.8rem;background:rgba(167,139,250,.04);border-radius:var(--rx);border:1px solid rgba(167,139,250,.1);font-size:.82rem;display:flex;flex-direction:column;gap:.35rem">
+              <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Permissions</div>
+              <div>✅ Publish Games</div><div>✅ Edit Games</div><div>⛔ Delete Games</div><div>⛔ Manage Admins</div>
+            </div>
+            <button onclick="openProf('b')" style="margin-top:.9rem;width:100%;padding:.65rem;border-radius:var(--rx);background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);color:var(--a4);font-family:'Exo 2',sans-serif;font-weight:800;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .22s">✏️ Edit Profile</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ══ GAME EDIT/ADD MODAL ══ -->
+<div class="mo" id="moGame"><div class="mo-box">
+  <div class="mo-hdr"><div class="mo-ttl" id="moGameTtl">Edit Game</div><button class="mo-cls" onclick="closeGameMo()">✕</button></div>
+  <div class="mo-body">
+    <div class="fg-grid">
+      <!-- Cover image upload -->
+      <div class="fg fg-full">
+        <label>Cover Image <span style="font-weight:400;color:var(--muted);font-size:.5rem">(upload from your device)</span></label>
+        <div class="dz" id="mDZ" onclick="document.getElementById('mImgIn').click()" style="min-height:85px">
+          <div class="dz-prev" id="mDZprev"><img id="mDZimg" src="" alt=""/><button class="dz-remove" onclick="rmMImg(event)">✕</button></div>
+          <div class="dz-ph" id="mDZph"><div class="dz-ico">🖼️</div><p>Drag &amp; drop or <span>click to upload</span></p><p class="hint">Auto-compressed on upload</p></div>
+        </div>
+        <input type="file" id="mImgIn" accept="image/*" style="display:none" onchange="handleMImg(this)"/>
+      </div>
+      <div class="fg"><label>Title *</label><input type="text" id="mTit" placeholder="Game title"/></div>
+      <div class="fg"><label>Category *</label><select id="mCat"><option value="">Select…</option><option>Action</option><option>Sports</option><option>RPG</option><option>Racing</option></select></div>
+      <div class="fg fg-full"><label>Description</label><textarea id="mDesc"></textarea></div>
+      <div class="fg"><label>Rating</label><input type="number" id="mRat" min="0" max="5" step="0.1"/></div>
+      <div class="fg"><label>File Size</label><input type="text" id="mSz"/></div>
+      <div class="fg"><label>Badge</label><select id="mBdg"><option value="">None</option><option value="hot">🔥 Hot</option><option value="new">✨ New</option><option value="free">🆓 Free</option></select></div>
+      <div class="fg"><label>Emoji</label><input type="text" id="mEmo" maxlength="4"/></div>
+      <div class="fg fg-full"><label>Download URL</label><input type="url" id="mURL"/></div>
+      <div class="fg"><label>Accent Color</label><input type="color" id="mCol" value="#00f0ff"/></div>
+      <div class="fg"><label>Downloads</label><input type="number" id="mDL"/></div>
+      <div class="fg"><label>Likes</label><input type="number" id="mLK"/></div>
+    </div>
+  </div>
+  <div class="mo-foot"><button class="btn-cancel" onclick="closeGameMo()">Cancel</button><button class="btn-save" onclick="saveGame()">💾 Save Game</button></div>
+</div></div>
+
+<!-- DELETE MODAL -->
+<div class="mo" id="moDelete"><div class="mo-box del-box">
+  <div class="mo-hdr"><div class="mo-ttl" style="color:var(--a2)">Delete Game</div><button class="mo-cls" onclick="closeDelMo()">✕</button></div>
+  <div class="del-body"><div class="del-ico">🗑️</div><div class="del-nm" id="delNm">Game</div><div class="del-msg">This permanently removes the game from the library and the website. This cannot be undone.</div></div>
+  <div class="mo-foot" style="justify-content:center"><button class="btn-cancel" onclick="closeDelMo()">Cancel</button><button class="btn-save" style="background:linear-gradient(90deg,var(--a2),#ff6d00)" onclick="confirmDel()">🗑 Delete</button></div>
+</div></div>
+
+<!-- PROFILE MODAL -->
+<div class="mo" id="moProf"><div class="mo-box prof-box">
+  <div class="mo-hdr"><div class="mo-ttl">Edit Administrator</div><button class="mo-cls" onclick="closeProfMo()">✕</button></div>
+  <div class="prof-tabs">
+    <div class="ptab a act" id="ptabA" onclick="switchPTab('a')">👤 Admin A</div>
+    <div class="ptab b" id="ptabB" onclick="switchPTab('b')">👤 Admin B</div>
+  </div>
+  <!-- Panel A -->
+  <div class="ppanel act" id="ppA">
+    <div class="pav-wrap" onclick="document.getElementById('pPhotoA').click()">
+      <img class="pav-img" id="pAvImgA" src="" alt=""/>
+      <div class="pav-ini a" id="pAvIniA">A</div>
+      <div class="pav-cam a">📷</div>
+    </div>
+    <input type="file" id="pPhotoA" accept="image/*" style="display:none" onchange="handlePPhoto('a',this)"/>
+    <div class="pav-hint">Click the photo or 📷 to upload from your device</div>
+    <div class="pfields">
+      <div><label>Display Name</label><input type="text" id="pNmA" placeholder="Your name" maxlength="40"/></div>
+      <div><label>Role / Title</label><input type="text" id="pRlA" placeholder="e.g. Super Administrator" maxlength="40"/></div>
+    </div>
+    <button class="psave a" onclick="saveProf('a')">✅ Save Admin A</button>
+  </div>
+  <!-- Panel B -->
+  <div class="ppanel" id="ppB">
+    <div class="pav-wrap" onclick="document.getElementById('pPhotoB').click()">
+      <img class="pav-img" id="pAvImgB" src="" alt=""/>
+      <div class="pav-ini b" id="pAvIniB">B</div>
+      <div class="pav-cam b">📷</div>
+    </div>
+    <input type="file" id="pPhotoB" accept="image/*" style="display:none" onchange="handlePPhoto('b',this)"/>
+    <div class="pav-hint">Click the photo or 📷 to upload from your device</div>
+    <div class="pfields">
+      <div><label>Display Name</label><input type="text" id="pNmB" placeholder="Your name" maxlength="40"/></div>
+      <div><label>Role / Title</label><input type="text" id="pRlB" placeholder="e.g. Game Manager" maxlength="40"/></div>
+    </div>
+    <button class="psave b" onclick="saveProf('b')">✅ Save Admin B</button>
+  </div>
+</div></div>
+
+<!-- LOGOUT MODAL -->
+<div class="mo" id="moLogout"><div class="mo-box logout-box">
+  <div class="mo-hdr"><div class="mo-ttl" style="color:var(--a2)">Sign Out?</div><button class="mo-cls" onclick="closeMo('moLogout')">✕</button></div>
+  <div class="logout-body">
+    <div style="font-size:2.8rem;margin-bottom:.8rem">🚪</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;margin-bottom:.55rem">Confirm Logout</div>
+    <div style="color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:.5rem">Your queue is saved and will be here when you return.</div>
+    <div id="moLogoutNote" style="display:none;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.14);border-radius:var(--rx);padding:.55rem .85rem;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--a1);margin-top:.7rem"></div>
+  </div>
+  <div class="mo-foot" style="justify-content:center;gap:.8rem">
+    <button class="btn-cancel" onclick="closeMo('moLogout')" style="font-size:.8rem;padding:.6rem 1.2rem">Stay Logged In</button>
+    <button onclick="doLogout()" style="padding:.6rem 1.4rem;border-radius:var(--rx);background:linear-gradient(90deg,var(--a2),#ff6d00);border:none;color:#fff;font-family:'Exo 2',sans-serif;font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">🚪 Sign Out</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ AUTH ══ */
+(function(){if(sessionStorage.getItem('eog_admin_auth')!=='1'&&localStorage.getItem('eog_admin_auth')!=='1')window.location.href='login.html';})();
+
+function logout(){
+  const note=document.getElementById('moLogoutNote');
+  if(QUEUE.length){note.style.display='block';note.textContent=`💾 ${QUEUE.length} game(s) in queue are saved for your next session`;}
+  else note.style.display='none';
+  openMo('moLogout');
+}
+function doLogout(){
+  logAct('🚪 Admin signed out','#ff3a6e','a');
+  sessionStorage.clear();localStorage.removeItem('eog_admin_auth');localStorage.removeItem('eog_admin_user');
+  showToast('👋 Signed out…');setTimeout(()=>location.href='login.html',900);
+}
+
+/* ══════════════════════════════
+   IMAGE SYSTEM
+   Game covers  → local file → IndexedDB (no size limit, handles 35+ games)
+   Admin photos → local file → base64 localStorage (small portrait ~50-100KB)
+   ══════════════════════════════ */
+
+/* ── IndexedDB for game images ── */
+let IDB=null;
+(()=>{const r=indexedDB.open('eog_imgs',1);r.onupgradeneeded=e=>e.target.result.createObjectStore('i');r.onsuccess=e=>IDB=e.target.result;})();
+function idbPut(key,val){if(!IDB)return;const tx=IDB.transaction('i','readwrite');tx.objectStore('i').put(val,key);}
+function idbGet(key){return new Promise(res=>{if(!IDB){res(null);return;}const tx=IDB.transaction('i','readonly');const r=tx.objectStore('i').get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null);});}
+function idbDel(key){if(!IDB)return;const tx=IDB.transaction('i','readwrite');tx.objectStore('i').delete(key);}
+
+/* ── Compress image on canvas ── */
+function compress(file,maxW,maxH,q=0.78){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
+        const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        res(cv.toDataURL('image/jpeg',q));
+      };img.src=e.target.result;
+    };r.readAsDataURL(file);
+  });
+}
+
+/* ── Game image (Add Games page) ── */
+let qImg='';
+function handleQImg(input){
+  const f=input.files[0];if(!f)return;
+  compress(f,460,215,0.8).then(b64=>{
+    qImg=b64;
+    document.getElementById('qDZimg').src=b64;
+    document.getElementById('qDZprev').classList.add('show');
+    document.getElementById('qDZph').style.display='none';
+    const pi=document.getElementById('qPvImg'),pe=document.getElementById('qPvEmo');
+    if(pi){pi.src=b64;pi.classList.add('show');}if(pe)pe.style.display='none';
+  });
+}
+function rmQImg(e){e.stopPropagation();qImg='';
+  document.getElementById('qDZimg').src='';
+  document.getElementById('qDZprev').classList.remove('show');
+  document.getElementById('qDZph').style.display='flex';
+  document.getElementById('qImgIn').value='';
+  const pi=document.getElementById('qPvImg'),pe=document.getElementById('qPvEmo');
+  if(pi)pi.classList.remove('show');if(pe)pe.style.display='flex';
+}
+
+/* ── Game image (Edit modal) ── */
+let mImg='';
+function handleMImg(input){
+  const f=input.files[0];if(!f)return;
+  compress(f,460,215,0.8).then(b64=>{
+    mImg=b64;
+    document.getElementById('mDZimg').src=b64;
+    document.getElementById('mDZprev').classList.add('show');
+    document.getElementById('mDZph').style.display='none';
+  });
+}
+function rmMImg(e){e.stopPropagation();mImg='';
+  document.getElementById('mDZimg').src='';
+  document.getElementById('mDZprev').classList.remove('show');
+  document.getElementById('mDZph').style.display='flex';
+  document.getElementById('mImgIn').value='';
+}
+
+/* drag-drop for both zones */
+['qDZ','mDZ'].forEach(id=>{
+  const z=document.getElementById(id);if(!z)return;
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag')});
+  z.addEventListener('dragleave',()=>z.classList.remove('drag'));
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag');
+    const f=e.dataTransfer.files[0];if(!f||!f.type.startsWith('image/'))return;
+    const inp=document.getElementById(id==='qDZ'?'qImgIn':'mImgIn');
+    const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;inp.dispatchEvent(new Event('change'));
+  });
+});
+
+/* ── Admin profile photos (local file → compressed base64) ── */
+function handlePPhoto(id,input){
+  const f=input.files[0];if(!f)return;
+  compress(f,200,200,0.82).then(b64=>{
+    const p=getProf(id);p.photo=b64;setProf(id,p);applyProf(id);
+    logAct(`📷 Admin ${id.toUpperCase()} updated their photo`,'#a78bfa',id);
+    showToast('📷 Photo updated!','ok');
+  });
+}
+
+/* ══ PROFILES ══ */
+const PDEFS={a:{name:'Admin One',role:'Super Administrator',photo:''},b:{name:'Admin Two',role:'Game Manager',photo:''}};
+function getProf(id){try{return JSON.parse(localStorage.getItem('eog_prof_'+id)||'null')||{...PDEFS[id]};}catch{return{...PDEFS[id]};}}
+function setProf(id,d){localStorage.setItem('eog_prof_'+id,JSON.stringify(d));}
+
+function applyProf(id){
+  const p=getProf(id),ID=id.toUpperCase(),ini=p.name.charAt(0).toUpperCase();
+  /* sidebar pill */
+  const pImg=document.getElementById('pillImg'+ID),pIni=document.getElementById('pillIni'+ID);
+  document.getElementById('pillNm'+ID).textContent=p.name;
+  document.getElementById('pillRl'+ID).textContent=p.role;
+  if(p.photo){pImg.src=p.photo;pImg.classList.add('vis');pIni.style.display='none';}
+  else{pImg.classList.remove('vis');pIni.style.display='flex';pIni.textContent=ini;}
+  /* admins page */
+  const aImg=document.getElementById('adPgImg'+ID),aIni=document.getElementById('adPgIni'+ID);
+  document.getElementById('adPgNm'+ID).textContent=p.name;
+  document.getElementById('adPgRl'+ID).textContent=p.role;
+  if(p.photo){aImg.src=p.photo;aImg.style.display='block';aIni.style.display='none';}
+  else{aImg.style.display='none';aIni.style.display='flex';aIni.textContent=ini;}
+  /* topbar (admin A) */
+  if(id==='a'){
+    const tImg=document.getElementById('tbAvImg'),tIni=document.getElementById('tbAvIni');
+    if(p.photo){tImg.src=p.photo;tImg.classList.add('vis');tIni.style.display='none';}
+    else{tImg.classList.remove('vis');tIni.style.display='flex';tIni.textContent=ini;}
+  }
+  /* profile modal fields */
+  const mImg2=document.getElementById('pAvImg'+ID),mIni2=document.getElementById('pAvIni'+ID);
+  if(document.getElementById('pNm'+ID))document.getElementById('pNm'+ID).value=p.name;
+  if(document.getElementById('pRl'+ID))document.getElementById('pRl'+ID).value=p.role;
+  if(p.photo){mImg2.src=p.photo;mImg2.classList.add('vis');mIni2.style.display='none';}
+  else{mImg2.classList.remove('vis');mIni2.style.display='flex';mIni2.textContent=ini;}
+}
+applyProf('a');applyProf('b');
+
+function openProf(id){switchPTab(id);openMo('moProf');}
+function closeProfMo(){closeMo('moProf');}
+function switchPTab(id){
+  ['a','b'].forEach(x=>{document.getElementById('ptab'+x.toUpperCase()).classList.remove('act');document.getElementById('pp'+x.toUpperCase()).classList.remove('act');});
+  document.getElementById('ptab'+id.toUpperCase()).classList.add('act');
+  document.getElementById('pp'+id.toUpperCase()).classList.add('act');
+}
+function saveProf(id){
+  const ID=id.toUpperCase();
+  const name=document.getElementById('pNm'+ID).value.trim()||PDEFS[id].name;
+  const role=document.getElementById('pRl'+ID).value.trim()||PDEFS[id].role;
+  const p=getProf(id);p.name=name;p.role=role;setProf(id,p);applyProf(id);
+  closeProfMo();
+  logAct(`👤 Admin ${ID} profile updated: "${name}"`,'#a78bfa',id);
+  showToast(`✅ Admin ${ID} profile saved!`,'ok');
+}
+
+/* ══ GAME DATA — 12 per category (48 defaults) ══ */
+const DEFAULTS=[
+  {id:1,t:"God of War",c:"Action",d:"Embark on Kratos's mythological journey.",r:4.9,sz:"45 GB",b:"hot",e:"⚔️",col:"#ff3a6e",dl:18200,lk:9400,url:"https://store.steampowered.com/app/1593500/",img:""},
+  {id:2,t:"Doom Eternal",c:"Action",d:"Rip and tear through demon hordes.",r:4.8,sz:"50 GB",b:"",e:"💀",col:"#ff5722",dl:14600,lk:7200,url:"https://store.steampowered.com/app/782330/",img:""},
+  {id:3,t:"Hades",c:"Action",d:"Escape the Underworld — roguelike masterpiece.",r:4.9,sz:"15 GB",b:"hot",e:"👹",col:"#880e4f",dl:16800,lk:8900,url:"https://store.steampowered.com/app/1145360/",img:""},
+  {id:4,t:"Devil May Cry 5",c:"Action",d:"Stylish combo-driven combat.",r:4.7,sz:"35 GB",b:"free",e:"🔥",col:"#ff1744",dl:9800,lk:5600,url:"https://store.steampowered.com/app/601150/",img:""},
+  {id:5,t:"Sekiro: Shadows Die Twice",c:"Action",d:"Master parrying in feudal Japan.",r:4.9,sz:"14 GB",b:"new",e:"🥷",col:"#455a64",dl:11200,lk:6800,url:"https://store.steampowered.com/app/814380/",img:""},
+  {id:6,t:"Batman Arkham Knight",c:"Action",d:"Glide through Gotham and take down supervillains.",r:4.6,sz:"36 GB",b:"",e:"🦇",col:"#263238",dl:8400,lk:4400,url:"https://store.steampowered.com/app/208650/",img:""},
+  {id:7,t:"Control",c:"Action",d:"Surreal third-person action in a brutalist building.",r:4.6,sz:"30 GB",b:"",e:"🔮",col:"#6a1b9a",dl:7200,lk:4100,url:"https://store.steampowered.com/app/870780/",img:""},
+  {id:8,t:"Ghostrunner",c:"Action",d:"Cyberpunk ninja parkour with one-hit-kill combat.",r:4.5,sz:"22 GB",b:"",e:"🗡️",col:"#0097a7",dl:6100,lk:3500,url:"https://store.steampowered.com/app/1139900/",img:""},
+  {id:9,t:"Returnal",c:"Action",d:"Roguelite shooter on an alien world.",r:4.7,sz:"60 GB",b:"new",e:"🌀",col:"#1565c0",dl:8800,lk:5100,url:"https://store.steampowered.com/app/1649240/",img:""},
+  {id:10,t:"Sifu",c:"Action",d:"Kung fu mastery with an age mechanic.",r:4.5,sz:"15 GB",b:"",e:"🥋",col:"#bf360c",dl:5900,lk:3200,url:"https://store.steampowered.com/app/2138710/",img:""},
+  {id:11,t:"Ghostwire Tokyo",c:"Action",d:"Paranormal action in neon-lit Tokyo.",r:4.3,sz:"20 GB",b:"",e:"🏮",col:"#ad1457",dl:5200,lk:2900,url:"https://store.steampowered.com/app/1475810/",img:""},
+  {id:12,t:"Metal Gear Rising",c:"Action",d:"Lightning-fast sword action — cut anything.",r:4.8,sz:"8 GB",b:"hot",e:"⚡",col:"#37474f",dl:10200,lk:6200,url:"https://store.steampowered.com/app/235460/",img:""},
+  {id:13,t:"EA FC 25",c:"Sports",d:"Realistic football with HyperMotion.",r:4.5,sz:"50 GB",b:"new",e:"⚽",col:"#00897b",dl:22400,lk:10200,url:"https://www.ea.com/games/ea-sports-fc/",img:""},
+  {id:14,t:"Rocket League",c:"Sports",d:"Rocket-powered soccer — free to play.",r:4.8,sz:"20 GB",b:"free",e:"🚀",col:"#1565c0",dl:24800,lk:12400,url:"https://www.epicgames.com/store/en-US/p/rocket-league",img:""},
+  {id:15,t:"NBA 2K25",c:"Sports",d:"Next-gen basketball with deep MyCareer.",r:4.4,sz:"55 GB",b:"",e:"🏀",col:"#e65100",dl:17900,lk:7800,url:"https://store.steampowered.com/app/2658880/",img:""},
+  {id:16,t:"WWE 2K24",c:"Sports",d:"Step into the ring with your favourite superstars.",r:4.3,sz:"46 GB",b:"hot",e:"🤼",col:"#b71c1c",dl:12600,lk:5400,url:"https://store.steampowered.com/app/2285240/",img:""},
+  {id:17,t:"eFootball 2025",c:"Sports",d:"Free-to-play football sim.",r:4.1,sz:"45 GB",b:"free",e:"🏆",col:"#1b5e20",dl:18200,lk:6900,url:"https://store.steampowered.com/app/1665460/",img:""},
+  {id:18,t:"Tennis World Tour 2",c:"Sports",d:"84 licensed courts.",r:4.0,sz:"8 GB",b:"",e:"🎾",col:"#558b2f",dl:4200,lk:2100,url:"https://store.steampowered.com/app/1342740/",img:""},
+  {id:19,t:"PGA Tour 2K25",c:"Sports",d:"Authentic golf with hundreds of real courses.",r:4.3,sz:"42 GB",b:"new",e:"⛳",col:"#2e7d32",dl:6800,lk:3200,url:"https://store.steampowered.com/app/2295340/",img:""},
+  {id:20,t:"Madden NFL 25",c:"Sports",d:"American football with updated Superstar mode.",r:4.2,sz:"50 GB",b:"",e:"🏈",col:"#4527a0",dl:9400,lk:4100,url:"https://www.ea.com/games/madden-nfl",img:""},
+  {id:21,t:"UFC 5",c:"Sports",d:"Hyper-realistic MMA with body damage.",r:4.4,sz:"44 GB",b:"hot",e:"🥊",col:"#c62828",dl:11200,lk:5800,url:"https://www.ea.com/games/ufc/ufc-5",img:""},
+  {id:22,t:"Riders Republic",c:"Sports",d:"Massive outdoor sports in national parks.",r:4.2,sz:"20 GB",b:"",e:"🚵",col:"#00838f",dl:7600,lk:3600,url:"https://store.steampowered.com/app/1318690/",img:""},
+  {id:23,t:"NHL 25",c:"Sports",d:"Hockey redefined with CHEL chemistry.",r:4.3,sz:"50 GB",b:"new",e:"🏒",col:"#0d47a1",dl:8100,lk:3900,url:"https://www.ea.com/games/nhl",img:""},
+  {id:24,t:"Mario Strikers Battle League",c:"Sports",d:"Chaotic 5v5 football with special shots.",r:4.1,sz:"4 GB",b:"",e:"⚽",col:"#e53935",dl:5400,lk:2800,url:"https://www.nintendo.com/",img:""},
+  {id:25,t:"Elden Ring",c:"RPG",d:"Vast open world by Miyazaki and G.R.R. Martin.",r:5.0,sz:"44 GB",b:"hot",e:"🌑",col:"#4a148c",dl:26400,lk:14200,url:"https://store.steampowered.com/app/1245620/",img:""},
+  {id:26,t:"Baldur's Gate 3",c:"RPG",d:"Landmark D&D RPG with unparalleled freedom.",r:5.0,sz:"122 GB",b:"new",e:"🐉",col:"#311b92",dl:19200,lk:10800,url:"https://store.steampowered.com/app/1086940/",img:""},
+  {id:27,t:"The Witcher 3",c:"RPG",d:"Play Geralt in a massive morally complex world.",r:4.9,sz:"50 GB",b:"free",e:"🧙",col:"#1a237e",dl:21800,lk:11600,url:"https://store.steampowered.com/app/292030/",img:""},
+  {id:28,t:"Final Fantasy XVI",c:"RPG",d:"Epic story with breathtaking Eikon battles.",r:4.7,sz:"97 GB",b:"",e:"⚡",col:"#0d47a1",dl:14200,lk:8400,url:"https://store.steampowered.com/app/2515020/",img:""},
+  {id:29,t:"Starfield",c:"RPG",d:"Bethesda's space RPG with 1,000+ planets.",r:4.2,sz:"139 GB",b:"",e:"🚀",col:"#1a237e",dl:12800,lk:5600,url:"https://store.steampowered.com/app/1716740/",img:""},
+  {id:30,t:"Dark Souls 3",c:"RPG",d:"Acclaimed conclusion to the Dark Souls trilogy.",r:4.8,sz:"15 GB",b:"hot",e:"☠️",col:"#37474f",dl:16200,lk:9200,url:"https://store.steampowered.com/app/374320/",img:""},
+  {id:31,t:"Dragon Age Inquisition",c:"RPG",d:"Lead a coalition against a demonic breach.",r:4.5,sz:"26 GB",b:"free",e:"🏰",col:"#b71c1c",dl:9400,lk:5200,url:"https://store.steampowered.com/app/1222690/",img:""},
+  {id:32,t:"Monster Hunter World",c:"RPG",d:"Hunt colossal creatures in a living ecosystem.",r:4.7,sz:"48 GB",b:"",e:"🦖",col:"#558b2f",dl:17600,lk:9800,url:"https://store.steampowered.com/app/582010/",img:""},
+  {id:33,t:"Cyberpunk 2077",c:"RPG",d:"Neon-drenched open world with deep character builds.",r:4.6,sz:"70 GB",b:"new",e:"🤖",col:"#f9a825",dl:22800,lk:11400,url:"https://store.steampowered.com/app/1091500/",img:""},
+  {id:34,t:"Divinity Original Sin 2",c:"RPG",d:"Rich tactical RPG with extraordinary freedom.",r:4.9,sz:"50 GB",b:"hot",e:"⚗️",col:"#6a1b9a",dl:13200,lk:7800,url:"https://store.steampowered.com/app/435150/",img:""},
+  {id:35,t:"Pathfinder: Wrath",c:"RPG",d:"Epic fantasy RPG with mythic powers.",r:4.4,sz:"52 GB",b:"",e:"📜",col:"#4e342e",dl:7600,lk:4200,url:"https://store.steampowered.com/app/1184370/",img:""},
+  {id:36,t:"Disco Elysium",c:"RPG",d:"Detective RPG driven entirely by skill checks.",r:4.8,sz:"16 GB",b:"free",e:"🕵️",col:"#37474f",dl:8800,lk:5400,url:"https://store.steampowered.com/app/632470/",img:""},
+  {id:37,t:"Forza Horizon 5",c:"Racing",d:"Open-world Mexico — the most expansive Forza.",r:4.9,sz:"103 GB",b:"hot",e:"🏎️",col:"#e65100",dl:20600,lk:10400,url:"https://store.steampowered.com/app/1551360/",img:""},
+  {id:38,t:"F1 2024",c:"Racing",d:"All F1 circuits with next-gen physics.",r:4.6,sz:"120 GB",b:"new",e:"🏁",col:"#d32f2f",dl:14200,lk:7200,url:"https://store.steampowered.com/app/2591280/",img:""},
+  {id:39,t:"Need for Speed Unbound",c:"Racing",d:"Street racing with stylised visuals.",r:4.3,sz:"50 GB",b:"",e:"💨",col:"#f57f17",dl:11600,lk:5800,url:"https://store.steampowered.com/app/1846380/",img:""},
+  {id:40,t:"Gran Turismo 7",c:"Racing",d:"450+ meticulously detailed vehicles.",r:4.8,sz:"110 GB",b:"hot",e:"🏆",col:"#b71c1c",dl:16800,lk:9400,url:"https://www.igdb.com/games/gran-turismo-7",img:""},
+  {id:41,t:"Wreckfest",c:"Racing",d:"Demolition derby with realistic damage physics.",r:4.7,sz:"15 GB",b:"free",e:"💥",col:"#bf360c",dl:9200,lk:4600,url:"https://store.steampowered.com/app/228380/",img:""},
+  {id:42,t:"Dirt Rally 2.0",c:"Racing",d:"Most authentic rally simulation.",r:4.7,sz:"60 GB",b:"",e:"🚗",col:"#4e342e",dl:8400,lk:4200,url:"https://store.steampowered.com/app/690790/",img:""},
+  {id:43,t:"Assetto Corsa Competizione",c:"Racing",d:"GT3 racing — the ultimate track-day experience.",r:4.7,sz:"30 GB",b:"",e:"🏎️",col:"#d81b60",dl:7800,lk:4100,url:"https://store.steampowered.com/app/805550/",img:""},
+  {id:44,t:"Burnout Paradise Remastered",c:"Racing",d:"Open-world crash racing with pure adrenaline.",r:4.5,sz:"35 GB",b:"",e:"🔥",col:"#e65100",dl:8200,lk:4400,url:"https://store.steampowered.com/app/1238080/",img:""},
+  {id:45,t:"Hot Wheels Unleashed 2",c:"Racing",d:"Turbo-charged toy car racing.",r:4.2,sz:"25 GB",b:"new",e:"🚙",col:"#f9a825",dl:6100,lk:3200,url:"https://store.steampowered.com/app/1621610/",img:""},
+  {id:46,t:"MotoGP 24",c:"Racing",d:"Official MotoGP with all real riders.",r:4.3,sz:"20 GB",b:"new",e:"🏍️",col:"#c62828",dl:5800,lk:2800,url:"https://store.steampowered.com/app/2604760/",img:""},
+  {id:47,t:"iRacing",c:"Racing",d:"World's premier online motorsport simulation.",r:4.6,sz:"60 GB",b:"",e:"🏁",col:"#283593",dl:11400,lk:6200,url:"https://www.iracing.com/",img:""},
+  {id:48,t:"WRC Generations",c:"Racing",d:"Ultimate world rally championship experience.",r:4.4,sz:"35 GB",b:"",e:"🏔️",col:"#37474f",dl:6600,lk:3400,url:"https://store.steampowered.com/app/1897030/",img:""},
+];
+/* Normalise stored games (old key names vs new short keys) */
+function normGame(g){
+  return{
+    id:g.id,
+    t:g.t||g.title||'Unknown',
+    c:g.c||g.cat||'Action',
+    d:g.d||g.desc||'',
+    r:g.r||g.rating||4.0,
+    sz:g.sz||g.size||'N/A',
+    b:g.b!==undefined?g.b:(g.badge||''),
+    e:g.e||g.emoji||'🎮',
+    col:g.col||g.color||'#00f0ff',
+    dl:g.dl||0,
+    lk:g.lk||g.likes||0,
+    url:g.url||'#',
+    img:g.img||''
+  };
+}
+function loadGames(){
+  try{
+    const d=localStorage.getItem('eog_games');
+    if(!d)return[...DEFAULTS];
+    return JSON.parse(d).map(normGame);
+  }catch{return[...DEFAULTS];}
+}
+
+function saveGames(g){
+  // Store EVERY game image permanently in IndexedDB keyed by game ID.
+  // We NEVER delete an image from IDB unless the admin explicitly removes it.
+  // This makes images permanent across page reloads and browser restarts.
+  g.forEach(x=>{
+    if(x.img && x.img.startsWith('data:')){
+      // Fresh base64 image — write to IDB
+      idbPut('gimg_'+x.id, x.img);
+    } else if(!x.img || x.img===''){
+      // No image — delete any stale IDB entry so table thumbnail goes blank too
+      idbDel('gimg_'+x.id);
+    }
+    // If x.img === '__idb__' the image is already in IDB — do nothing
+  });
+  // Only store metadata in localStorage (no base64, keeps it tiny)
+  const meta=g.map(x=>({
+    ...x,
+    img: (x.img && x.img!=='' && x.img!=='__idb__') ? '__idb__' :
+         (x.img==='__idb__') ? '__idb__' : ''
+  }));
+  try{localStorage.setItem('eog_games',JSON.stringify(meta));}
+  catch(e){console.warn('localStorage full');}
+}
+
+let GAMES=loadGames();
+let nextId=Math.max(...GAMES.map(g=>g.id),0)+1;
+let editId=null,delId=null;
+
+/* Restore ALL game images from IndexedDB, then do the first full render.
+   This runs once at startup and guarantees every game card shows its photo. */
+async function restoreImgsAndInit(){
+  await new Promise(res=>{
+    // Poll until IDB is ready (it opens asynchronously)
+    function check(){if(IDB)res();else setTimeout(check,40);}
+    check();
+  });
+  // Load every image that has __idb__ pointer
+  await Promise.all(GAMES.map(async g=>{
+    if(g.img==='__idb__'){
+      const stored=await idbGet('gimg_'+g.id);
+      g.img = stored || '';
+    }
+  }));
+  // Also restore queue images
+  await Promise.all(QUEUE.map(async g=>{
+    if(g.img==='__idb__'){
+      const stored=await idbGet('qimg_'+g.id);
+      g.img = stored || '';
+    }
+  }));
+  // Now render everything with real images
+  rebuildUI();
+  renderQ();
+  drawWeekChart();
+}
+restoreImgsAndInit();
+
+/* Queue — metadata in localStorage, images in IDB under qimg_ keys */
+function loadQueue(){try{return(JSON.parse(localStorage.getItem('eog_queue')||'[]')).map(normGame)}catch{return[]}}
+function saveQueue(){
+  QUEUE.forEach(x=>{
+    if(x.img && x.img.startsWith('data:')) idbPut('qimg_'+x.id, x.img);
+    else if(!x.img) idbDel('qimg_'+x.id);
+  });
+  localStorage.setItem('eog_queue',JSON.stringify(QUEUE.map(x=>({...x,img:x.img&&x.img!==''?'__idb__':''}))));
+}
+let QUEUE=loadQueue();
+
+/* Activity log */
+function loadActLog(){try{return JSON.parse(localStorage.getItem('eog_act')||'[]')}catch{return[]}}
+function saveActLog(){localStorage.setItem('eog_act',JSON.stringify(ACT.slice(0,30)));}
+let ACT=loadActLog();
+function logAct(txt,col='#00f0ff',adminId='a'){
+  const p=getProf(adminId);
+  ACT.unshift({txt,col,adminId,nm:p.name,ph:p.photo||'',ts:Date.now()});
+  saveActLog();buildActList();
+}
+function fmtTime(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
+
+/* ══ MOBILE SIDEBAR ══ */
+function toggleSB(){const s=document.getElementById('sidebar'),t=document.getElementById('sbTog'),o=document.getElementById('sbOv');s.classList.toggle('open');t.classList.toggle('op');o.style.display=s.classList.contains('open')?'block':'none';}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sbTog').classList.remove('op');document.getElementById('sbOv').style.display='none';}
+
+/* ══ NAVIGATION ══ */
+const PGNAMES={dashboard:'Dashboard',analytics:'Analytics',games:'Manage Games',upload:'Add Games',downloads:'Downloads',likes:'Likes & Ratings',admins:'Administrators'};
+function goPage(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
+  document.querySelectorAll('.sb-lnk').forEach(l=>l.classList.remove('act'));
+  document.getElementById('pg-'+id).classList.add('act');
+  const lnk=document.querySelector(`[data-pg="${id}"]`);if(lnk)lnk.classList.add('act');
+  document.getElementById('tbTitle').textContent=PGNAMES[id]||id;
+  if(id==='games')renderTbl(GAMES,1);
+  if(id==='analytics'){setTimeout(()=>{drawMonth('downloads');drawCat();drawRadar();},80);}
+  closeSB();
+}
+document.querySelectorAll('.sb-lnk[data-pg]').forEach(l=>l.addEventListener('click',()=>goPage(l.dataset.pg)));
+
+/* ══ STATS ══ */
+function animN(el,n){if(!el)return;let s=0;const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/1500,1);const v=Math.floor(p*n);el.textContent=v>=10000?(v/1000).toFixed(0)+'K':v>=1000?(v/1000).toFixed(1)+'K':v;if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step);}
+function updateStats(){
+  const tDL=GAMES.reduce((a,g)=>a+g.dl,0),tLK=GAMES.reduce((a,g)=>a+g.lk,0);
+  const avg=GAMES.length?(GAMES.reduce((a,g)=>a+g.r,0)/GAMES.length).toFixed(1):'—';
+  animN(document.getElementById('stDL'),tDL);animN(document.getElementById('stLK'),tLK);
+  const sg=document.getElementById('stGM');if(sg)sg.textContent=GAMES.length;
+  ['avgRat','lkAvg'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=avg+(avg!=='—'?'★':'');});
+  const lks=document.getElementById('lkStat');if(lks)animN(lks,tLK);
+  /* donut */
+  const cats=['Action','Sports','RPG','Racing'],idm={Action:'dnA',Sports:'dnS',RPG:'dnR',Racing:'dnRc'};
+  const tot=GAMES.reduce((a,g)=>a+g.lk,0)||1;
+  const catLK=Object.fromEntries(cats.map(c=>[c,GAMES.filter(g=>g.c===c).reduce((a,g)=>a+g.lk,0)]));
+  cats.forEach(c=>{const e=document.getElementById(idm[c]);if(e)e.textContent=Math.round(catLK[c]/tot*100)+'%';});
+  const circ=289,dids=['dn1','dn2','dn3','dn4'];let off=0;
+  cats.forEach((c,i)=>{const el=document.getElementById(dids[i]);if(!el)return;const p=catLK[c]/tot;const d=circ*p;el.style.strokeDasharray=`${d} ${circ-d}`;el.style.strokeDashoffset=-off;off+=d;});
+  const db=document.getElementById('dnBig');if(db)animN(db,tot);
+}
+
+/* ══ CANVAS CHARTS ══ */
+function clrCanvas(id){const c=document.getElementById(id);if(!c)return null;const ctx=c.getContext('2d');const w=c.parentElement.offsetWidth;c.width=w;c.height=parseInt(c.getAttribute('height')||160);ctx.clearRect(0,0,c.width,c.height);return{c,ctx,w:c.width,h:c.height};}
+function drawLineChart(id,data,labels,color,maxMult=1.14){
+  const d=clrCanvas(id);if(!d)return;const{ctx,w,h}=d;
+  const pad={t:18,r:16,b:32,l:48},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,mx=Math.max(...data)*maxMult;
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+ch*(1-i/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='9px Space Mono,monospace';ctx.textAlign='right';const v=Math.round(mx*i/4/100)*100;ctx.fillText(v>=1000?(v/1000).toFixed(0)+'K':v,pad.l-5,y+3);}
+  ctx.fillStyle='rgba(255,255,255,.26)';ctx.font='9px Space Mono,monospace';ctx.textAlign='center';
+  labels.forEach((l,i)=>{const x=pad.l+i*(cw/(data.length-1));ctx.fillText(l,x,h-9);});
+  const grd=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);grd.addColorStop(0,color+'44');grd.addColorStop(1,color+'04');
+  ctx.beginPath();data.forEach((v,i)=>{const x=pad.l+i*(cw/(data.length-1));const y=pad.t+ch*(1-v/mx);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle=grd;ctx.fill();
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2.2;ctx.lineJoin='round';
+  data.forEach((v,i)=>{const x=pad.l+i*(cw/(data.length-1));const y=pad.t+ch*(1-v/mx);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  data.forEach((v,i)=>{const x=pad.l+i*(cw/(data.length-1));const y=pad.t+ch*(1-v/mx);ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();});
+}
+const MDATA={downloads:[18000,22000,19500,24000,21000,28400,25600,30000,27000,32000,29000,35000],likes:[8000,9400,8800,10200,9600,12400,11200,13600,12000,14800,13200,16000],revenue:[3200,4100,3600,4800,4200,5600,5000,6400,5800,7200,6600,8000]};
+const MCOL={downloads:'#00f0ff',likes:'#ff3a6e',revenue:'#ffe000'};
+const MLBL=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let curMV='downloads';
+function setMV(v,btn){curMV=v;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('act'));if(btn)btn.classList.add('act');drawMonth(v);}
+function drawMonth(v='downloads'){drawLineChart('monthChart',MDATA[v],MLBL,MCOL[v]);}
+function drawWeekChart(){drawLineChart('weekChart',[3400,4200,3800,5600,4900,6200,5100],['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],'#00f0ff');}
+function drawCat(){
+  const d=clrCanvas('catChart');if(!d)return;const{ctx,w,h}=d;
+  const cats=['Action','Sports','RPG','Racing'],cols=['#ff3a6e','#00f0ff','#ce93d8','#ffe000'];
+  const vals=cats.map(c=>GAMES.filter(g=>g.c===c).reduce((a,g)=>a+g.dl,0)||Math.floor(Math.random()*15000+8000));
+  const pad={t:18,r:16,b:32,l:48},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,mx=Math.max(...vals)*1.12;
+  const bw=cw/cats.length*.55,gap=cw/cats.length;
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+ch*(1-i/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='9px Space Mono,monospace';ctx.textAlign='right';const v=Math.round(mx*i/4/100)*100;ctx.fillText(v>=1000?(v/1000).toFixed(0)+'K':v,pad.l-5,y+3);}
+  cats.forEach((c,i)=>{
+    const bh=(vals[i]/mx)*ch,x=pad.l+i*gap+(gap-bw)/2,y=pad.t+ch-bh;
+    const grd=ctx.createLinearGradient(0,y,0,pad.t+ch);grd.addColorStop(0,cols[i]);grd.addColorStop(1,cols[i]+'55');
+    ctx.fillStyle=grd;ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,bw,bh,4):ctx.rect(x,y,bw,bh);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.28)';ctx.font='9px Space Mono,monospace';ctx.textAlign='center';ctx.fillText(c,x+bw/2,h-10);
+    ctx.fillStyle=cols[i];ctx.font='bold 9px sans-serif';ctx.fillText(vals[i]>=1000?(vals[i]/1000).toFixed(0)+'K':vals[i],x+bw/2,y-4);
+  });
+}
+function drawRadar(){
+  const d=clrCanvas('radarChart');if(!d)return;const{ctx,w,h}=d;
+  const cx=w/2,cy=h/2,r=Math.min(w,h)/2*.68;
+  const axes=['Downloads','Likes','Rating','Variety','Growth'],n=axes.length;
+  const cats=['Action','Sports','RPG','Racing'],cols=['#ff3a6e88','#00f0ff88','#ce93d888','#ffe00088'],scols=['#ff3a6e','#00f0ff','#ce93d8','#ffe000'];
+  for(let lv=1;lv<=5;lv++){ctx.beginPath();ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;for(let i=0;i<n;i++){const a=i*2*Math.PI/n-Math.PI/2;const x=cx+r*lv/5*Math.cos(a);const y=cy+r*lv/5*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();ctx.stroke();}
+  for(let i=0;i<n;i++){const a=i*2*Math.PI/n-Math.PI/2;ctx.beginPath();ctx.strokeStyle='rgba(255,255,255,.11)';ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));ctx.stroke();ctx.fillStyle='rgba(255,255,255,.46)';ctx.font='10px Space Mono,monospace';ctx.textAlign='center';ctx.fillText(axes[i],cx+(r+20)*Math.cos(a),cy+(r+20)*Math.sin(a)+4);}
+  const raw={Action:[.88,.86,.95,.7,.82],Sports:[.75,.72,.78,.65,.68],RPG:[.82,.84,.96,.88,.75],Racing:[.7,.68,.76,.6,.72]};
+  cats.forEach((cat,ci)=>{const vals=raw[cat];ctx.beginPath();for(let i=0;i<n;i++){const a=i*2*Math.PI/n-Math.PI/2;const x=cx+r*vals[i]*Math.cos(a);const y=cy+r*vals[i]*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();ctx.fillStyle=cols[ci];ctx.fill();ctx.strokeStyle=scols[ci];ctx.lineWidth=1.8;ctx.stroke();});
+  const lx=10,ly=h-cats.length*15-8;
+  cats.forEach((c,i)=>{ctx.fillStyle=scols[i];ctx.beginPath();ctx.arc(lx+5,ly+i*15+4,4.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.46)';ctx.font='10px Space Mono,monospace';ctx.textAlign='left';ctx.fillText(c,lx+13,ly+i*15+8);});
+}
+
+/* ══ DASHBOARD WIDGETS ══ */
+
+/* IDs above this threshold are "admin-added" (not defaults).
+   The defaults go from id 1–48. Admin adds always get nextId which starts at 49+. */
+const DEFAULT_MAX_ID = 48;
+
+function buildRecentGrid(){
+  /* ── Section 1: Admin-added games (id > DEFAULT_MAX_ID) ── */
+  const adminGrid=document.getElementById('adminAddedGrid');
+  const adminEmpty=document.getElementById('adminAddedEmpty');
+  const adminBadge=document.getElementById('adminAddedBadge');
+  const adminGames=GAMES.filter(g=>g.id>DEFAULT_MAX_ID);
+
+  if(adminGrid){
+    adminGrid.innerHTML='';
+    if(adminGames.length===0){
+      if(adminEmpty)adminEmpty.style.display='block';
+      if(adminBadge)adminBadge.textContent='0 games';
+    } else {
+      if(adminEmpty)adminEmpty.style.display='none';
+      if(adminBadge)adminBadge.textContent=`${adminGames.length} game${adminGames.length>1?'s':''}`;
+      adminGames.slice(0,12).forEach(gm=>{
+        const card=document.createElement('div');card.className='rg-card';
+        // Always show photo if it exists; if not, show emoji placeholder
+        const ih=gm.img
+          ?`<img class="rg-img" src="${gm.img}" alt="${gm.t}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"/><div class="rg-ph" style="display:none;background:linear-gradient(135deg,${gm.col}22,${gm.col}08)">${gm.e}</div>`
+          :`<div class="rg-ph" style="background:linear-gradient(135deg,${gm.col}22,${gm.col}08)">${gm.e}</div>`;
+        const newTag=`<span style="position:absolute;top:6px;left:6px;font-family:'Space Mono',monospace;font-size:.48rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.12rem .4rem;border-radius:4px;background:var(--a3);color:#000">NEW</span>`;
+        card.style.position='relative';
+        card.innerHTML=`<div style="position:relative">${ih}${newTag}</div>`
+          +`<div class="rg-body"><div class="rg-ttl">${gm.t}</div><div class="rg-meta"><span class="rg-cat">${gm.c}</span><span class="rg-rat">⭐${gm.r}</span></div></div>`;
+        card.style.cursor='pointer';
+        card.onclick=()=>openEditMo(gm.id);
+        adminGrid.appendChild(card);
+      });
+    }
+  }
+
+  /* ── Section 2: All recent games (top 10 by recency = position in array) ── */
+  const g=document.getElementById('rgGrid');if(!g)return;g.innerHTML='';
+  const rb=document.getElementById('rgBadge');if(rb)rb.textContent=`${GAMES.length} total`;
+  GAMES.slice(0,10).forEach(gm=>{
+    const card=document.createElement('div');card.className='rg-card';
+    const ih=gm.img
+      ?`<img class="rg-img" src="${gm.img}" alt="${gm.t}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"/><div class="rg-ph" style="display:none;background:linear-gradient(135deg,${gm.col}22,${gm.col}08)">${gm.e}</div>`
+      :`<div class="rg-ph" style="background:linear-gradient(135deg,${gm.col}22,${gm.col}08)">${gm.e}</div>`;
+    card.innerHTML=ih+`<div class="rg-body"><div class="rg-ttl">${gm.t}</div><div class="rg-meta"><span class="rg-cat">${gm.c}</span><span class="rg-rat">⭐${gm.r}</span></div></div>`;
+    g.appendChild(card);
+  });
+}
+
+function buildTopList(){
+  const c=document.getElementById('topList');if(!c)return;c.innerHTML='';
+  [...GAMES].sort((a,b)=>b.dl-a.dl).slice(0,5).forEach((g,i)=>{
+    const el=document.createElement('div');el.className='top-item';
+    const avH=g.img
+      ?`<div class="top-emo"><img src="${g.img}" alt="" onerror="this.style.display='none';this.parentNode.textContent='${g.e}'"/></div>`
+      :`<div class="top-emo" style="background:${g.col}22;border-radius:4px">${g.e}</div>`;
+    const rcls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    el.innerHTML=`<div class="top-rank ${rcls}">${i+1}</div>${avH}<div class="top-info"><div class="top-nm">${g.t}</div><div class="top-mt">${g.c}</div></div><div class="top-dl">${(g.dl/1000).toFixed(1)}K</div>`;
+    c.appendChild(el);
+  });
+}
+function buildActList(){
+  const c=document.getElementById('actList');if(!c)return;c.innerHTML='';
+  const log=ACT.length?ACT:[
+    {txt:'🌐 Dashboard loaded',col:'#00f0ff',adminId:'a',nm:'Admin One',ph:'',ts:Date.now()-300000},
+    {txt:'🎮 Game library ready',col:'#34d399',adminId:'a',nm:'Admin One',ph:'',ts:Date.now()-600000},
+  ];
+  log.slice(0,7).forEach(ev=>{
+    const el=document.createElement('div');el.className='act-item';
+    const avH=ev.ph
+      ?`<div class="act-av"><img src="${ev.ph}" alt="" onerror="this.parentNode.textContent='${(ev.nm||'A').charAt(0).toUpperCase()}'"/></div>`
+      :`<div class="act-av" style="background:${ev.adminId==='a'?'linear-gradient(135deg,#00f0ff,#00bcd4)':'linear-gradient(135deg,#a78bfa,#7c3aed)'}">${(ev.nm||'A').charAt(0).toUpperCase()}</div>`;
+    el.innerHTML=`<div class="act-dot" style="background:${ev.col}"></div>${avH}<span class="act-txt">${ev.txt}</span><span class="act-time">${fmtTime(ev.ts)}</span>`;
+    c.appendChild(el);
+  });
+}
+
+/* ══ GAMES TABLE + PAGINATION ══ */
+let curPage=1;const PGSZ=15;
+function filterTbl(q){curPage=1;renderTbl(q?GAMES.filter(g=>g.t.toLowerCase().includes(q.toLowerCase())||g.c.toLowerCase().includes(q.toLowerCase())):GAMES,1);}
+function gSearch(q){if(!q)return;const f=GAMES.filter(g=>g.t.toLowerCase().includes(q.toLowerCase())||g.c.toLowerCase().includes(q.toLowerCase()));goPage('games');setTimeout(()=>renderTbl(f,1),50);}
+
+function renderTbl(games,page=1){
+  curPage=page;
+  const tbody=document.getElementById('gmTbl');if(!tbody)return;tbody.innerHTML='';
+  const tot=games.length,totPg=Math.max(1,Math.ceil(tot/PGSZ));
+  const pg=Math.max(1,Math.min(page,totPg));
+  const start=(pg-1)*PGSZ,end=Math.min(start+PGSZ,tot);
+  document.getElementById('gmCount').textContent=`All Games (${tot})${totPg>1?' — Page '+pg+'/'+totPg:''}`;
+  const maxDL=Math.max(...GAMES.map(g=>g.dl),1),maxLK=Math.max(...GAMES.map(g=>g.lk),1);
+  games.slice(start,end).forEach(g=>{
+    const tr=document.createElement('tr');
+    const bdg=g.b?`<span class="td-bdg b-${g.b}">${g.b}</span>`:`<span class="td-bdg b-none">—</span>`;
+    const th=g.img?`<img class="td-th" src="${g.img}" alt="${g.t}"/>`:`<div class="td-ph" style="background:${g.col}22">${g.e}</div>`;
+    tr.innerHTML=`<td><div class="td-game">${th}<div><div class="td-ttl">${g.t}</div><div class="td-cat">${g.c}</div></div></div></td><td>${g.c}</td><td>${g.dl.toLocaleString()}<div class="mini-bar"><div class="mini-fill" style="width:${Math.round(g.dl/maxDL*100)}%;background:var(--a1)"></div></div></td><td>${g.lk.toLocaleString()}<div class="mini-bar"><div class="mini-fill" style="width:${Math.round(g.lk/maxLK*100)}%;background:var(--a2)"></div></div></td><td>⭐${g.r}</td><td>${bdg}</td><td><div class="td-acts"><button class="ab a-ed" onclick="openEditMo(${g.id})">✏️</button><button class="ab a-dl" onclick="openDelMo(${g.id})">🗑</button></div></td>`;
+    tbody.appendChild(tr);
+  });
+  const ep=document.getElementById('tblPag');if(ep)ep.remove();
+  if(totPg>1){
+    const pag=document.createElement('div');pag.id='tblPag';pag.style.cssText='display:flex;align-items:center;justify-content:center;gap:.38rem;padding:.8rem 1.2rem;border-top:1px solid var(--bd);flex-wrap:wrap';
+    const mk=(lbl,p,dis,act)=>{const b=document.createElement('button');b.textContent=lbl;b.disabled=dis;b.style.cssText=`padding:.26rem .62rem;border-radius:5px;font-family:'Space Mono',monospace;font-size:.6rem;cursor:${dis?'default':'pointer'};border:1px solid ${act?'var(--a1)':dis?'rgba(255,255,255,.05)':'var(--bd)'};background:${act?'rgba(0,240,255,.12)':'rgba(255,255,255,.02)'};color:${act?'var(--a1)':dis?'var(--muted)':'var(--muted)'}`;if(!dis)b.onclick=()=>renderTbl(games,p);return b;};
+    pag.appendChild(mk('←',pg-1,pg<=1,false));
+    const wn=5,hl=Math.floor(wn/2);let lo=Math.max(1,pg-hl),hi=Math.min(totPg,lo+wn-1);if(hi-lo<wn-1)lo=Math.max(1,hi-wn+1);
+    if(lo>1){pag.appendChild(mk('1',1,false,false));if(lo>2){const sp=document.createElement('span');sp.textContent='…';sp.style.cssText='font-size:.6rem;color:var(--muted)';pag.appendChild(sp);}}
+    for(let i=lo;i<=hi;i++)pag.appendChild(mk(i,i,false,i===pg));
+    if(hi<totPg){if(hi<totPg-1){const sp=document.createElement('span');sp.textContent='…';sp.style.cssText='font-size:.6rem;color:var(--muted)';pag.appendChild(sp);}pag.appendChild(mk(totPg,totPg,false,false));}
+    pag.appendChild(mk('→',pg+1,pg>=totPg,false));
+    document.querySelector('.tbl-wrap').appendChild(pag);
+  }
+}
+
+/* ══ QUEUE ══ */
+function getFormGame(){
+  const t=document.getElementById('qTit').value.trim(),cat=document.getElementById('qCat').value;
+  if(!t||!cat){showToast('⚠ Title and Category required','err');return null;}
+  return{id:nextId++,t,c:cat,d:document.getElementById('qDesc').value.trim(),
+    r:parseFloat(document.getElementById('qRat').value)||4.0,sz:document.getElementById('qSz').value.trim()||'N/A',
+    b:document.getElementById('qBdg').value,e:document.getElementById('qEmo').value.trim()||'🎮',
+    url:document.getElementById('qURL').value.trim()||'#',col:document.getElementById('qCol').value,
+    dl:parseInt(document.getElementById('qDL').value)||0,lk:parseInt(document.getElementById('qLK').value)||0,img:qImg};
+}
+function resetQF(){
+  ['qTit','qCat','qDesc','qRat','qSz','qBdg','qEmo','qURL','qDL','qLK'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('qCol').value='#00f0ff';rmQImg({stopPropagation:()=>{}});updQP();
+}
+function addToQueue(){const g=getFormGame();if(!g)return;QUEUE.push(g);if(g.img)idbPut('qimg_'+g.id,g.img);saveQueue();resetQF();renderQ();logAct(`📋 "${g.t}" added to queue`,'#a78bfa','a');showToast(`📋 "${g.t}" in queue (${QUEUE.length})`);}
+function addAndPub(){const g=getFormGame();if(!g)return;GAMES.unshift(g);saveGames(GAMES);resetQF();logAct(`🚀 "${g.t}" (${g.c}) published`,'#00f0ff','a');rebuildUI();showToast(`🚀 "${g.t}" published!`,'ok');}
+function pubAll(){if(!QUEUE.length){showToast('⚠ Queue is empty','err');return;}const n=QUEUE.length;QUEUE.forEach(g=>GAMES.unshift(g));saveGames(GAMES);QUEUE=[];saveQueue();renderQ();logAct(`🚀 ${n} games published from queue`,'#34d399','a');rebuildUI();showToast(`🚀 ${n} games published!`,'ok');setTimeout(()=>goPage('games'),1400);}
+function clearQ(){if(!QUEUE.length)return;if(!confirm(`Clear all ${QUEUE.length} game(s)?`))return;QUEUE=[];saveQueue();renderQ();showToast('Queue cleared');}
+function removeQItem(i){QUEUE.splice(i,1);saveQueue();renderQ();}
+function pubQItem(i){const g=QUEUE[i];GAMES.unshift(g);saveGames(GAMES);QUEUE.splice(i,1);saveQueue();renderQ();logAct(`🚀 "${g.t}" published from queue`,'#00f0ff','a');rebuildUI();showToast(`🚀 "${g.t}" published!`,'ok');}
+
+function renderQ(){
+  const list=document.getElementById('qList'),banner=document.getElementById('qBanner');
+  list.innerHTML='';
+  if(!QUEUE.length){banner.classList.remove('show');return;}
+  banner.classList.add('show');document.getElementById('qLabel').textContent=`${QUEUE.length} game${QUEUE.length>1?'s':''} in queue`;
+  QUEUE.forEach((g,i)=>{
+    const item=document.createElement('div');item.className='q-item';
+    const th=g.img?`<img class="q-th" src="${g.img}" alt=""/>`:`<div class="q-emo" style="background:${g.col}22">${g.e}</div>`;
+    const bdg=g.b?`<span style="margin-left:.35rem;font-size:.52rem;font-family:'Space Mono',monospace;padding:.08rem .35rem;border-radius:4px;background:rgba(0,240,255,.1);color:var(--a1)">${g.b}</span>`:'';
+    item.innerHTML=`${th}<div style="flex:1;min-width:0"><div class="q-ttl">${g.t}${bdg}</div><div class="q-mt">${g.c} · ⭐${g.r} · ${g.sz}</div></div><div style="display:flex;gap:.28rem;flex-shrink:0"><button onclick="pubQItem(${i})" style="padding:.22rem .5rem;border-radius:4px;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.22);color:var(--a1);font-size:.62rem;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:700">🚀</button><button onclick="removeQItem(${i})" style="padding:.22rem .5rem;border-radius:4px;background:rgba(255,58,110,.08);border:1px solid rgba(255,58,110,.18);color:var(--a2);font-size:.62rem;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:700">✕</button></div>`;
+    list.appendChild(item);
+  });
+}
+
+function updQP(){
+  const t=document.getElementById('qTit').value||'Game Title',c=document.getElementById('qCat').value||'Category';
+  const e=document.getElementById('qEmo').value||'🎮',r=document.getElementById('qRat').value||'—',col=document.getElementById('qCol').value;
+  ['qPvTtl','qPvCat','qPvEmoSpan'].forEach((id,i)=>{const el=document.getElementById(id);if(!el)return;el.textContent=i===0?t:i===1?`${c} · ⭐${r}`:e;});
+  const pc=document.getElementById('qPvCard');if(pc){pc.style.background=`linear-gradient(135deg,${col}12,${col}04)`;pc.style.borderColor=`${col}22`;}
+}
+
+/* ══ GAME EDIT MODAL ══ */
+function openAddModal(){editId=null;mImg='';document.getElementById('moGameTtl').textContent='Add New Game';['mTit','mCat','mDesc','mRat','mSz','mBdg','mEmo','mURL','mDL','mLK'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('mCol').value='#00f0ff';rmMImg({stopPropagation:()=>{}});openMo('moGame');}
+function openEditMo(id){const g=GAMES.find(x=>x.id===id);if(!g)return;editId=id;mImg=g.img||'';document.getElementById('moGameTtl').textContent='Edit Game';document.getElementById('mTit').value=g.t;document.getElementById('mCat').value=g.c;document.getElementById('mDesc').value=g.d||'';document.getElementById('mRat').value=g.r;document.getElementById('mSz').value=g.sz;document.getElementById('mBdg').value=g.b;document.getElementById('mEmo').value=g.e;document.getElementById('mURL').value=g.url;document.getElementById('mCol').value=g.col;document.getElementById('mDL').value=g.dl;document.getElementById('mLK').value=g.lk;const pi=document.getElementById('mDZprev'),ph=document.getElementById('mDZph'),di=document.getElementById('mDZimg');if(g.img){di.src=g.img;pi.classList.add('show');ph.style.display='none';}else{pi.classList.remove('show');ph.style.display='flex';}openMo('moGame');}
+function closeGameMo(){closeMo('moGame');}
+function saveGame(){
+  const t=document.getElementById('mTit').value.trim(),cat=document.getElementById('mCat').value;
+  if(!t||!cat){showToast('⚠ Title and Category required','err');return;}
+  const g={id:editId||nextId++,t,c:cat,d:document.getElementById('mDesc').value.trim(),r:parseFloat(document.getElementById('mRat').value)||4.0,sz:document.getElementById('mSz').value.trim()||'N/A',b:document.getElementById('mBdg').value,e:document.getElementById('mEmo').value.trim()||'🎮',url:document.getElementById('mURL').value.trim()||'#',col:document.getElementById('mCol').value,dl:parseInt(document.getElementById('mDL').value)||0,lk:parseInt(document.getElementById('mLK').value)||0,img:mImg};
+  if(editId){const idx=GAMES.findIndex(x=>x.id===editId);if(idx>-1)GAMES[idx]=g;}else GAMES.unshift(g);
+  saveGames(GAMES);closeGameMo();logAct(editId?`✏️ "${g.t}" updated`:`🎮 "${g.t}" added to ${g.c}`,'#00f0ff','a');rebuildUI();showToast(editId?`✅ "${g.t}" updated!`:`🎮 "${g.t}" added!`,'ok');
+}
+function openDelMo(id){const g=GAMES.find(x=>x.id===id);if(!g)return;delId=id;document.getElementById('delNm').textContent=g.t;openMo('moDelete');}
+function closeDelMo(){closeMo('moDelete');}
+function confirmDel(){const g=GAMES.find(x=>x.id===delId);GAMES=GAMES.filter(g=>g.id!==delId);if(g)idbDel('gimg_'+delId);saveGames(GAMES);closeDelMo();logAct(`🗑 "${g?.t||'Game'}" deleted`,'#ff3a6e','a');rebuildUI();showToast('🗑 Game removed','err');}
+
+/* ══ REPORT TABLES ══ */
+function buildDLTbl(){const tbody=document.getElementById('dlTbl');if(!tbody)return;tbody.innerHTML='';const mx=Math.max(...GAMES.map(g=>g.dl),1);[...GAMES].sort((a,b)=>b.dl-a.dl).forEach(g=>{const tr=document.createElement('tr');const pct=Math.round(g.dl/mx*100);const th=g.img?`<img class="td-th" src="${g.img}" alt=""/>`:`<div class="td-ph" style="background:${g.col}22">${g.e}</div>`;tr.innerHTML=`<td><div class="td-game">${th}<div class="td-ttl">${g.t}</div></div></td><td>${g.c}</td><td>${g.dl.toLocaleString()}</td><td style="width:120px"><div class="mini-bar" style="height:5px"><div class="mini-fill" style="width:${pct}%;background:var(--a1)"></div></div></td><td style="color:#00e676">↑${Math.floor(Math.random()*18+3)}%</td>`;tbody.appendChild(tr);});}
+function buildLKTbl(){const tbody=document.getElementById('lkTbl');if(!tbody)return;tbody.innerHTML='';[...GAMES].sort((a,b)=>b.lk-a.lk).forEach(g=>{const tr=document.createElement('tr');const th=g.img?`<img class="td-th" src="${g.img}" alt=""/>`:`<div class="td-ph" style="background:${g.col}22">${g.e}</div>`;tr.innerHTML=`<td><div class="td-game">${th}<div class="td-ttl">${g.t}</div></div></td><td>${g.c}</td><td>❤️${g.lk.toLocaleString()}</td><td style="color:var(--a3)">★${g.r}</td><td>${(g.lk*.13).toFixed(0)}</td><td style="color:#00e676">↑${Math.floor(Math.random()*14+2)}%</td>`;tbody.appendChild(tr);});}
+
+/* ══ MODAL HELPERS ══ */
+function openMo(id){document.getElementById(id).classList.add('open');}
+function closeMo(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+/* ══ TOAST ══ */
+function showToast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3300);}
+
+/* ══ REFRESH ALL ══ */
+function rebuildUI(){updateStats();buildTopList();buildRecentGrid();buildActList();renderTbl(GAMES,1);buildDLTbl();buildLKTbl();}
+
+/* ══ INIT ══
+   restoreImgsAndInit() is called above — it:
+   1. Waits for IndexedDB to open
+   2. Restores all game images + queue images from IDB into GAMES/QUEUE arrays
+   3. Calls rebuildUI(), renderQ(), drawWeekChart() once everything is ready
+   We only need to add the resize listener and log the login event here. ══ */
+logAct('🔐 Admin signed in','#34d399','a');
+window.addEventListener('resize',()=>{
+  drawWeekChart();
+  if(document.getElementById('pg-analytics').classList.contains('act')){
+    drawMonth(curMV);drawCat();drawRadar();
+  }
+});
+</script>
+</body>
+</html>
